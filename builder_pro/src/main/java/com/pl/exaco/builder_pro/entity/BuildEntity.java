@@ -18,12 +18,12 @@ public class BuildEntity {
 
     @Id
     @GeneratedValue (strategy = GenerationType.AUTO)
-    @Column(name="id")
+    @Column(name="Id")
     private Integer id;
-    @Column(name="build_type")
+    @Column(name="BuildType")
     private String buildType;
     @ManyToOne
-    @JoinColumn(name="project_id")
+    @JoinColumn(name="ProjectId")
     private ProjectEntity projectId;
 
 }
