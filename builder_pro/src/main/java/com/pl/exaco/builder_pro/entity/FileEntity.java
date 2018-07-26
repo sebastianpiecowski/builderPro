@@ -19,14 +19,14 @@ import lombok.Data;
 public class FileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
+    @Column(name = "Id")
     private Integer id;
-    @Column(name = "file_name")
+    @Column(name = "FileName")
     private String fileName;
-    @Column(name= "upload_date")
+    @Column(name= "UploadDate")
     private Timestamp uploadDate;
     @ManyToOne
-    @JoinColumn(name = "build_id")
+    @JoinColumn(name = "BuildId")
     private BuildEntity buildId;
 
 }
