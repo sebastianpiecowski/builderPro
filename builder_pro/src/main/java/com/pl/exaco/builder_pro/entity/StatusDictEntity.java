@@ -3,11 +3,12 @@ package com.pl.exaco.builder_pro.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
 @Entity
 @Table(name = "StatusDict")
-public class StatusDictEntity {
+public class StatusDictEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

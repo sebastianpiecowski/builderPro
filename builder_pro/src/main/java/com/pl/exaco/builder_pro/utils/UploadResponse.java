@@ -1,13 +1,13 @@
 package com.pl.exaco.builder_pro.utils;
 
 public class UploadResponse {
-    private String jobId;
+    private String job;
 
-    public String getJobId() {
-        return jobId;
+    public String getJob() {
+        return job;
     }
 
-    public void setJobId(String jobId) {
-        this.jobId = jobId;
+    public void setJob(String job) {
+        this.job = job;
     }
 }

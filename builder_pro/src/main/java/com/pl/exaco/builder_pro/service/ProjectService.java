@@ -21,4 +21,15 @@ public class ProjectService {
         return projectRepository.findById(id);
     }
 
+    public ProjectEntity getProjectByName(String name) {
+        return  projectRepository.findByName(name);
+    }
+
+    public Integer findOrAddProject(String projectName) {
+        ProjectEntity project=projectRepository.findByName(projectName);
+        if(project==null) {
+            ProjectEntity projectEntity=new ProjectEntity();
+            projectEntity.set
+        }
+    }
 }

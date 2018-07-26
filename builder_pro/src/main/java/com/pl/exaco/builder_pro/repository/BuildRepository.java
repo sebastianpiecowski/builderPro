@@ -6,4 +6,5 @@ import com.pl.exaco.builder_pro.entity.BuildEntity;
 
 public interface BuildRepository extends JpaRepository<BuildEntity, Integer>{
 
+    BuildEntity findById(int id);
 }

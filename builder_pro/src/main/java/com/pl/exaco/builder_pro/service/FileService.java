@@ -34,13 +34,11 @@ public class FileService {
         modelMapper=new ModelMapper();
         return modelMapper.map(fileRepository.findById(id),FileDTO.class);
     }
-	@Autowired
-	private FileRepository fileRepository;
 
-	public void updateFileStatus(int fileId, int statusId){
-		FileEntity fileEntity = fileRepository.findById(fileId);
-		fileEntity.setStatusId(statusId);
-		fileRepository.save(fileEntity);
-	}
+//	public void updateFileStatus(int fileId, int statusId){
+//		FileEntity fileEntity = fileRepository.findById(fileId);
+//		fileEntity.setStatusId(statusId);
+//		fileRepository.save(fileEntity);
+//	}
 
 }

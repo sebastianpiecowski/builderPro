@@ -19,10 +19,6 @@ import lombok.Data;
 @Table(name = "[File]")
 public class FileEntity implements Serializable {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "Id")
@@ -39,6 +35,6 @@ public class FileEntity implements Serializable {
     @Column(name = "ExpirationDate")
     private Timestamp expirationDate;
     @ManyToOne
-    @JoinColumn(name = "StatusId")
+    @JoinColumn(name = "StatusDictId")
     private StatusDictEntity statusId;
 }
