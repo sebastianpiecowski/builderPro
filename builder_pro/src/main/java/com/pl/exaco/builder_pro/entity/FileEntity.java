@@ -2,7 +2,6 @@ package com.pl.exaco.builder_pro.entity;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.pl.exaco.builder_pro.utils.datetimeParser;
 import lombok.Data;
 
 @Data
@@ -43,9 +41,4 @@ public class FileEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "StatusId")
     private StatusDictEntity statusId;
-
-    public Timestamp getExpirationDate() {
-        Timestamp parsed= datetimeParser.timestampParses(expirationDate);
-        return parsed;
-    }
 }

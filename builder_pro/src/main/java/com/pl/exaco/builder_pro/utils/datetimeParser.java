@@ -7,6 +7,6 @@ public class datetimeParser {
 
     public static String parseToString(Timestamp datetime) {
         String out = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(datetime);
-        return s;
+        return out;
     }
 }

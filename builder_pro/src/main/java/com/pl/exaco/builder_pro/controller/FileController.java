@@ -1,5 +1,6 @@
 package com.pl.exaco.builder_pro.controller;
 
+import com.pl.exaco.builder_pro.dto.FileDTO;
 import com.pl.exaco.builder_pro.entity.FileEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,11 +22,11 @@ public class FileController {
 	private FileService fileService;
 
 	@GetMapping(value="/file")
-	public ResponseEntity<List<FileEntity>> getFiles(){
+	public ResponseEntity<List<FileDTO>> getFiles(){
 		return new ResponseEntity<>(fileService.getFiles(), HttpStatus.OK);
 	}
 	@GetMapping(value="/file/{fileId}")
-	public ResponseEntity<FileEntity> getFile(@PathVariable("fileId") Integer id) {
+	public ResponseEntity<FileDTO> getFile(@PathVariable("fileId") Integer id) {
 		return new ResponseEntity<>(fileService.getFile(id), HttpStatus.OK);
 	}
 	
