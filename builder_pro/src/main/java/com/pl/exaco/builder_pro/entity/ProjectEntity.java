@@ -22,11 +22,11 @@ public class ProjectEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="id")
+    @Column(name="Id")
     private Integer id;
-    @Column(name="name")
+    @Column(name="Name")
     private String name;
-    @Column(name="thumbnail")
+    @Column(name="Thumbnail")
     private String thumbnail;
     @Column(name="LastBuildFileName")
     private String lastBuildFileName;

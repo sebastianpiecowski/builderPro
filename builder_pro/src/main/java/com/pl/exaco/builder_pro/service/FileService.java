@@ -1,5 +1,6 @@
 package com.pl.exaco.builder_pro.service;
 
+import com.pl.exaco.builder_pro.entity.FileEntity;
 import com.pl.exaco.builder_pro.dto.FileDTO;
 import com.pl.exaco.builder_pro.entity.FileEntity;
 import com.pl.exaco.builder_pro.repository.FileRepository;
@@ -33,4 +34,13 @@ public class FileService {
         modelMapper=new ModelMapper();
         return modelMapper.map(fileRepository.findById(id),FileDTO.class);
     }
+	@Autowired
+	private FileRepository fileRepository;
+
+	public void updateFileStatus(int fileId, int statusId){
+		FileEntity fileEntity = fileRepository.findById(fileId);
+		fileEntity.setStatusId(statusId);
+		fileRepository.save(fileEntity);
+	}
+
 }
