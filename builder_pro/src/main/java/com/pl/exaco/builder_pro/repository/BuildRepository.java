@@ -12,7 +12,4 @@ public interface BuildRepository extends JpaRepository<BuildEntity, Integer> {
     BuildEntity findByProjectId_IdAndBuildDictId_NameAndFlavorDictId_Name(int projectId, String buildDictName, String flavorDictName);
 
     List<BuildEntity> findByProjectId_Id(int projectId);
-
-    List<BuildEntity> findByFlavorDictId_Name(String name);
-
 }

@@ -3,6 +3,7 @@ package com.pl.exaco.builder_pro.controller;
 import com.pl.exaco.builder_pro.dto.ProjectDTO;
 import com.pl.exaco.builder_pro.dto.ProjectsDTO;
 import com.pl.exaco.builder_pro.entity.ProjectEntity;
+import com.pl.exaco.builder_pro.service.FileService;
 import com.pl.exaco.builder_pro.service.ProjectService;
 import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private FileService fileService;
 
     @GetMapping(value = "/project")
     public ResponseEntity<ProjectsDTO> getProjects(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
@@ -37,6 +40,7 @@ public class ProjectController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        fileService.getFilesByProjectId(id);
         ProjectDTO project = projectService.getProject(id);
         return new ResponseEntity<>(project, HttpStatus.OK);
     }

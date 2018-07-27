@@ -61,6 +61,7 @@ public class FileService {
         return fileEntity.getId();
     }
 
+
     public void updateFileStatus(int fileId, int statusId) {
         FileEntity fileEntity = fileRepository.findById(fileId);
         if(fileEntity != null){
@@ -68,5 +69,11 @@ public class FileService {
             fileRepository.save(fileEntity);
         }
     }
+    //test
+    public List<FileEntity> getFilesByProjectId(int id){
 
+
+        System.out.println("TEST------------"+fileRepository.findByBuildIdProjectId_Id(id).size());
+        return fileRepository.findByBuildIdProjectId_Id(id);
+    }
 }

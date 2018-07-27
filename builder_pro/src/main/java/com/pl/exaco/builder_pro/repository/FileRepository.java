@@ -11,4 +11,6 @@ public interface FileRepository extends JpaRepository<FileEntity, Integer> {
     FileEntity findById(int id);
 
     List<FileEntity> findByBuildId_Id(int id);
+
+    List<FileEntity> findByBuildIdProjectId_Id(int id);
 }
