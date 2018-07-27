@@ -4,6 +4,7 @@ import com.pl.exaco.builder_pro.entity.BuildEntity;
 import com.pl.exaco.builder_pro.entity.FileEntity;
 import com.pl.exaco.builder_pro.dto.FileDTO;
 import com.pl.exaco.builder_pro.entity.FileEntity;
+import com.pl.exaco.builder_pro.entity.StatusDictEntity;
 import com.pl.exaco.builder_pro.repository.FileRepository;
 import com.pl.exaco.builder_pro.repository.StatusRepository;
 import com.pl.exaco.builder_pro.utils.appNameParser;
@@ -29,10 +30,11 @@ public class FileService {
     private static final int NUMBER_OF_DAYS = 3;
 
     private ModelMapper modelMapper;
+
     public List<FileDTO> getFiles() {
-        List<FileDTO> list=new ArrayList<>();
-        List<FileEntity> files=fileRepository.findAll();
-        files.forEach(e-> {
+        List<FileDTO> list = new ArrayList<>();
+        List<FileEntity> files = fileRepository.findAll();
+        files.forEach(e -> {
             list.add(new FileDTO(e));
         });
         return list;
@@ -42,7 +44,7 @@ public class FileService {
         return new FileDTO(fileRepository.findById(id));
     }
 
-    public Integer addFile(BuildEntity buildEntity, Map<String,String> applicationInfo) {
+    public Integer addFile(BuildEntity buildEntity, Map<String, String> applicationInfo) {
 
         FileEntity fileEntity = new FileEntity();
         fileEntity.setBuildId(buildEntity);
@@ -64,16 +66,35 @@ public class FileService {
 
     public void updateFileStatus(int fileId, int statusId) {
         FileEntity fileEntity = fileRepository.findById(fileId);
-        if(fileEntity != null){
-            fileEntity.setStatusId(statusRepository.findById(statusId));
+        if (fileEntity != null) {
+            StatusDictEntity statusDictEntity = statusRepository.findById(statusId);
+            if (statusDictEntity != null) {
+                fileEntity.setStatusId(statusDictEntity);
+                fileRepository.save(fileEntity);
+            }
+        }
+    }
+
+    public void updateFileDiawiLink(int fileId, String diawiLink) {
+        FileEntity fileEntity = fileRepository.findById(fileId);
+        if (fileEntity != null) {
+            fileEntity.setDiawiUrl(diawiLink);
+            Timestamp expirationTimestamp = new Timestamp(System.currentTimeMillis());
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(expirationTimestamp);
+            cal.add(Calendar.DAY_OF_WEEK, NUMBER_OF_DAYS);
+            expirationTimestamp.setTime(cal.getTime().getTime());
+            fileEntity.setExpirationDate(expirationTimestamp);
             fileRepository.save(fileEntity);
         }
     }
-    //test
+
     public List<FileEntity> getFilesByProjectId(int id){
-
-
-        System.out.println("TEST------------"+fileRepository.findByBuildIdProjectId_Id(id).size());
         return fileRepository.findByBuildIdProjectId_Id(id);
     }
+
+    public FileEntity findById(int id) {
+        return fileRepository.findById(id);
+    }
+
 }
