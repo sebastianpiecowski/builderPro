@@ -1,9 +1,6 @@
 package com.pl.exaco.builder_pro.service;
 
-import com.pl.exaco.builder_pro.dto.FlavorDTO;
-import com.pl.exaco.builder_pro.dto.FlavorFileDTO;
-import com.pl.exaco.builder_pro.dto.ProjectDTO;
-import com.pl.exaco.builder_pro.dto.TypeDTO;
+import com.pl.exaco.builder_pro.dto.*;
 import com.pl.exaco.builder_pro.entity.BuildEntity;
 import com.pl.exaco.builder_pro.entity.FileEntity;
 import com.pl.exaco.builder_pro.entity.ProjectEntity;
@@ -27,8 +24,11 @@ public class ProjectService {
     @Autowired
     private FileRepository fileRespository;
 
-    public List<ProjectEntity> getAllProjects() {
-        return projectRepository.findAll();
+    public ProjectsDTO getAllProjects() {
+        ProjectsDTO projectsDTO = new ProjectsDTO();
+        projectsDTO.setProjects(projectRepository.findAll());
+
+        return projectsDTO;
     }
 
     public ProjectDTO getProject(int id) {

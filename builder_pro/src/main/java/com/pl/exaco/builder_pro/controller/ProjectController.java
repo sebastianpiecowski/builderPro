@@ -1,6 +1,7 @@
 package com.pl.exaco.builder_pro.controller;
 
 import com.pl.exaco.builder_pro.dto.ProjectDTO;
+import com.pl.exaco.builder_pro.dto.ProjectsDTO;
 import com.pl.exaco.builder_pro.entity.ProjectEntity;
 import com.pl.exaco.builder_pro.service.ProjectService;
 import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
@@ -19,7 +20,7 @@ public class ProjectController {
     private ProjectService projectService;
 
     @GetMapping(value = "/project")
-    public ResponseEntity<List<ProjectEntity>> getProjects(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
+    public ResponseEntity<ProjectsDTO> getProjects(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
         try {
             AuthenticationHelper.Authorize(token);
         } catch (Exception e) {
