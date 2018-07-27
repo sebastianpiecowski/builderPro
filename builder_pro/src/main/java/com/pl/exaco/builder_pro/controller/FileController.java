@@ -83,14 +83,13 @@ public class FileController {
     }
 
     @PostMapping(value = "/file/{id}")
-    @ResponseBody
-    public ResponseEntity<Void> ChangeFileStatus(@PathVariable("id") Integer id, @RequestParam("statusId") Integer statusId) {
+    public ResponseEntity<Void> ChangeFileStatus(@PathVariable("id") Integer id, @RequestBody FileStatusUpdateRequest request) {
         try {
-            fileService.updateFileStatus(id, statusId);
+            fileService.updateFileStatus(id, request.getStatusId());
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         }
-        return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
     }
 
 }
