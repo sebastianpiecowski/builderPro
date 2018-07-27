@@ -2,7 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8226af4a-1ab8-4911-9a1a-e08f2fd5c9be" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builder_pro/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/builder_pro/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builder_pro/src/main/java/com/pl/exaco/builder_pro/controller/ProjectController.java" beforeDir="false" afterPath="$PROJECT_DIR$/builder_pro/src/main/java/com/pl/exaco/builder_pro/controller/ProjectController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builder_pro/src/main/java/com/pl/exaco/builder_pro/dto/FileDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/builder_pro/src/main/java/com/pl/exaco/builder_pro/dto/FileDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builder_pro/src/main/java/com/pl/exaco/builder_pro/repository/BuildRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/builder_pro/src/main/java/com/pl/exaco/builder_pro/repository/BuildRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builder_pro/src/main/java/com/pl/exaco/builder_pro/repository/FileRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/builder_pro/src/main/java/com/pl/exaco/builder_pro/repository/FileRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builder_pro/src/main/java/com/pl/exaco/builder_pro/service/ProjectService.java" beforeDir="false" afterPath="$PROJECT_DIR$/builder_pro/src/main/java/com/pl/exaco/builder_pro/service/ProjectService.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -38,7 +44,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="898" />
-    <option name="y" value="24" />
+    <option name="y" value="34" />
     <option name="width" value="2942" />
     <option name="height" value="2090" />
   </component>
@@ -47,8 +53,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView" />
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -136,13 +141,14 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/builder_pro" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="Modules" />
@@ -217,6 +223,7 @@
       <workItem from="1532589167296" duration="347000" />
       <workItem from="1532589593256" duration="55000" />
       <workItem from="1532589659191" duration="80000" />
+      <workItem from="1532688164245" duration="45000" />
     </task>
     <servers />
   </component>
@@ -226,11 +233,10 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="482000" />
+    <option name="totallyTimeSpent" value="527000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="898" y="24" width="2942" height="2090" extended-state="0" />
-    <editor active="true" />
+    <frame x="898" y="34" width="2942" height="2090" extended-state="0" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -241,19 +247,19 @@
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="right" id="Maven Projects" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32988626" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25345305" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25517955" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info id="UI Designer" order="2" />
       <window_info anchor="right" id="Theme Preview" order="3" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -269,6 +275,13 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/builder_pro/src/main/java/com/pl/exaco/builder_pro/BuilderProApplication.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/builder_pro/src/main/java/com/pl/exaco/builder_pro/BuilderProApplication.java">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
