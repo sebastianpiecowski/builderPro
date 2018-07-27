@@ -10,6 +10,7 @@ import com.pl.exaco.builder_pro.model.FileStatusUpdateRequest;
 import com.pl.exaco.builder_pro.service.BuildService;
 import com.pl.exaco.builder_pro.service.FileService;
 import com.pl.exaco.builder_pro.service.ProjectService;
+import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
 import com.pl.exaco.builder_pro.utils.appNameParser;
 import com.pl.exaco.builder_pro.utils.diawi.DiawiService;
 import com.pl.exaco.builder_pro.utils.diawi.StatusResponse;
@@ -45,19 +46,34 @@ public class FileController {
     private DiawiService diawiService;
 
     @GetMapping(value = "/file")
-    public ResponseEntity<List<FileDTO>> getFiles() {
+    public ResponseEntity<List<FileDTO>> getFiles(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
+        try {
+            AuthenticationHelper.Authorize(token);
+        } catch(Exception e){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         return new ResponseEntity<>(fileService.getFiles(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/file/{fileId}")
-    public ResponseEntity<FileDTO> getFile(@PathVariable("fileId") Integer id) {
+    public ResponseEntity<FileDTO> getFile(@PathVariable("fileId") Integer id, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
+        try {
+            AuthenticationHelper.Authorize(token);
+        } catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         return new ResponseEntity<>(fileService.getFile(id), HttpStatus.OK);
     }
 
     @PostMapping(value = "/SendAppToFtp", produces=MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<IdDTO> SendAppToFtp(@RequestPart("file") MultipartFile file) {
+    public ResponseEntity<IdDTO> SendAppToFtp(@RequestPart("file") MultipartFile file, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
         if (file != null) {
             try {
+                try {
+                    AuthenticationHelper.Authorize(token);
+                } catch (Exception e){
+                    return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+                }
                 File savedFile = multipartFileParser.parseMultipartFileToFile(file);
                 UploadResponse uploadResponse = diawiService.uploadFile(savedFile);
                 StatusResponse status = diawiService.getJobFinalStatus(uploadResponse.getJob());
@@ -83,7 +99,12 @@ public class FileController {
     }
 
     @PostMapping(value = "/file/{id}")
-    public ResponseEntity<Void> ChangeFileStatus(@PathVariable("id") Integer id, @RequestBody FileStatusUpdateRequest request) {
+    public ResponseEntity<Void> ChangeFileStatus(@PathVariable("id") Integer id, @RequestBody FileStatusUpdateRequest request, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
+        try {
+            AuthenticationHelper.Authorize(token);
+        } catch (Exception e){
+            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         try {
             fileService.updateFileStatus(id, request.getStatusId());
             return new ResponseEntity<>(HttpStatus.OK);
