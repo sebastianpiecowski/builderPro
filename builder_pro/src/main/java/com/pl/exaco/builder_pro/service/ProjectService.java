@@ -26,17 +26,17 @@ public class ProjectService {
         return  projectRepository.findByName(name);
     }
 
-    public Integer findOrAddProject(Map<String, String> projectInfo) {
+    public ProjectEntity findOrAddProject(Map<String, String> projectInfo) {
         ProjectEntity project=projectRepository.findByName(projectInfo.get("ProjectName"));
         if(project==null) {
             ProjectEntity projectEntity=new ProjectEntity();
             projectEntity.setName(projectInfo.get("ProjectName"));
             projectEntity.setLastBuildFileName(projectInfo.get("FileName"));
             projectRepository.save(projectEntity);
-            return projectEntity.getId();
+            return projectEntity;
         }
         else {
-            return project.getId();
+            return project;
         }
     }
 }

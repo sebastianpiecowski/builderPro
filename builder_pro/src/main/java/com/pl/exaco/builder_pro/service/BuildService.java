@@ -1,6 +1,7 @@
 package com.pl.exaco.builder_pro.service;
 
 import com.pl.exaco.builder_pro.entity.BuildEntity;
+import com.pl.exaco.builder_pro.entity.ProjectEntity;
 import com.pl.exaco.builder_pro.repository.BuildDictRepository;
 import com.pl.exaco.builder_pro.repository.FlavorDictRepository;
 import com.pl.exaco.builder_pro.repository.ProjectRepository;
@@ -31,20 +32,20 @@ public class BuildService {
 		return buildRepository.findById(id);
 	};
 
-    public Integer findOrAddBuild(int projectId,Map<String, String> buildInfo) {
-    	BuildEntity buildEntity=buildRepository.findByProjectIdAndBuildDictId_NameAndFlavorDictId_Name(projectId, buildInfo.get("BuildType"), buildInfo.get("Flavor"));
+    public BuildEntity findOrAddBuild(ProjectEntity projectId, Map<String, String> buildInfo) {
+    	BuildEntity buildEntity=buildRepository.findByProjectId_IdAndBuildDictId_NameAndFlavorDictId_Name(projectId.getId(), buildInfo.get("BuildType"), buildInfo.get("Flavor"));
     	if(buildEntity==null) {
     		BuildEntity newBuildEntity=new BuildEntity();
     		newBuildEntity.setBuildDictId(buildDictRepository.findByName(buildInfo.get("BuildType")));
     		newBuildEntity.setFlavorDictId(flavorDictRepository.findByName(buildInfo.get("Flavor")));
-    		newBuildEntity.setProjectId(projectRepository.findById(projectId));
+    		newBuildEntity.setProjectId(projectId);
 
     		buildRepository.save(newBuildEntity);
-    		return newBuildEntity.getId();
+    		return newBuildEntity;
 		}
 		else {
-    		return buildEntity.getId();
+    		return buildEntity;
 		}
-    }
+    };
 
 }

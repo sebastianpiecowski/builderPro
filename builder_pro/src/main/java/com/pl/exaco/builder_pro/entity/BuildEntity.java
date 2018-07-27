@@ -29,7 +29,7 @@ public class BuildEntity implements Serializable {
     @JoinColumn(name="ProjectId")
     private ProjectEntity projectId;
     @ManyToOne
-    @JoinColumn(name="FlavorId")
+    @JoinColumn(name="FlavorDictId")
     private FlavorDictEntity flavorDictId;
 
 }

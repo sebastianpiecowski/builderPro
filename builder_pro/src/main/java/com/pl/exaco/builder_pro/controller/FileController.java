@@ -1,6 +1,9 @@
 package com.pl.exaco.builder_pro.controller;
 
 import com.pl.exaco.builder_pro.dto.FileDTO;
+import com.pl.exaco.builder_pro.entity.BuildEntity;
+import com.pl.exaco.builder_pro.entity.FileEntity;
+import com.pl.exaco.builder_pro.entity.ProjectEntity;
 import com.pl.exaco.builder_pro.service.BuildService;
 import com.pl.exaco.builder_pro.service.FileService;
 import com.pl.exaco.builder_pro.service.ProjectService;
@@ -21,8 +24,6 @@ import retrofit2.http.Path;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public class FileController {
     }
 
     @PostMapping(value = "/SendAppToFtp")
-    public ResponseEntity<Void> SendAppToFtp(@RequestParam("name") String name, @RequestPart("file") MultipartFile file) {
+    public ResponseEntity<Void> SendAppToFtp(@RequestPart("file") MultipartFile file) {
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         Retrofit retrofit = setRetrofit(httpClient);
@@ -72,11 +73,11 @@ public class FileController {
             if (status.getStatus() == 2000) {
                 Map<String,String> applicationInfo=appNameParser.parseApk(newFile.getName(), status);
 
-                int projectId=projectService.findOrAddProject(applicationInfo);
-                int buildId=buildService.findOrAddBuild(projectId, applicationInfo);
+                ProjectEntity projectId = projectService.findOrAddProject(applicationInfo);
+                BuildEntity buildEntity = buildService.findOrAddBuild(projectId, applicationInfo);
+                FileEntity fe = fileService.addFile(buildEntity, applicationInfo);
 
-                System.out.println(projectId);
-               // System.out.println(buildId);
+
                 return new ResponseEntity<>(HttpStatus.OK);
 
             } else {
@@ -105,17 +106,6 @@ public class FileController {
         }
 
     }
-
-
-
-    //else
-
-
-
-
-
-
-
     private StatusResponse checkStatus(DiawiApiService service, String job) {
         StatusResponse status = null;
         try {
@@ -144,8 +134,6 @@ public class FileController {
     }
 
     private Retrofit setRetrofit(OkHttpClient.Builder httpClient) {
-        // OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-
         httpClient.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -162,7 +150,8 @@ public class FileController {
 
     private File parseMultipartFileToFile(MultipartFile file) {
         try {
-            Files.createDirectories(Paths.get("/storage/"));
+            new File("storage/").mkdir();
+//            Files.createDirectories(Paths.get("/storage/"));
         } catch (Exception e) {
             e.printStackTrace();
         }

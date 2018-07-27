@@ -10,11 +10,16 @@ public class appNameParser {
 
         String[] arr=name.split("-");
 
-        applicationInfo.put("ProjectName", arr[0]);
-        applicationInfo.put("Flavor", arr[1]);
-        applicationInfo.put("BuildType", arr[2]);
+        applicationInfo.put("ProjectName", arr[0].toLowerCase());
+        applicationInfo.put("Flavor", arr[1].toLowerCase());
+
+
+
+//        System.out.println(arr2[0]);
+        applicationInfo.put("BuildType", arr[2].split("\\.")[0].toLowerCase());
+
         applicationInfo.put("FileName", name);
-        applicationInfo.put("diawiUrl", status.getLink());
+        applicationInfo.put("DiawiUrl", status.getLink());
 
         return applicationInfo;
     }
