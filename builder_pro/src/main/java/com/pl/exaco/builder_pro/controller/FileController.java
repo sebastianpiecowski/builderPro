@@ -55,8 +55,8 @@ public class FileController {
         return new ResponseEntity<>(fileService.getFiles(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/file/{fileId}")
-    public ResponseEntity<FileDTO> getFile(@PathVariable("fileId") Integer id, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
+    @GetMapping(value = "/file/{id}")
+    public ResponseEntity<FileDTO> getFile(@PathVariable("id") Integer id, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
         try {
             AuthenticationHelper.Authorize(token);
         } catch (Exception e){

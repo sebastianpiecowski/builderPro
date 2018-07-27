@@ -55,6 +55,7 @@ public class FileService {
         cal.add(Calendar.DAY_OF_WEEK, NUMBER_OF_DAYS);
         Timestamp expirationTimestamp = new Timestamp(cal.getTime().getTime());
         fileEntity.setExpirationDate(expirationTimestamp);
+        fileEntity.setStatusId(statusRepository.findById(1));
         //TODO SET STATUS_ID
         fileRepository.save(fileEntity);
         return fileEntity.getId();
