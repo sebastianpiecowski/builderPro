@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class multipartFileParser {
 
-    private static final String DIRECTORY_PATH="storage/";
+    public static final String DIRECTORY_PATH="storage/";
 
     public static File parseMultipartFileToFile(MultipartFile file) {
         new File(DIRECTORY_PATH).mkdir();

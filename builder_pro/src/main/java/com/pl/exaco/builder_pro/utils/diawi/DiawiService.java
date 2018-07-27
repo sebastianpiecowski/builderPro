@@ -12,9 +12,9 @@ import java.io.IOException;
 @Service
 public class DiawiService {
 
-    private static final int DIAWI_OK = 2000;
-    private static final int DIAWI_ERROR_ = 4000;
-    private static final int DIAWI_IN_PROGRESS = 2001;
+    public static final int DIAWI_OK = 2000;
+    public static final int DIAWI_ERROR_ = 4000;
+    public static final int DIAWI_IN_PROGRESS = 2001;
 
     private static final String TOKEN = "DGePpPm1BQX9wZtq4BfYSo6lUfoJrp8pmL8n5NEoBr";
 
@@ -40,6 +40,11 @@ public class DiawiService {
             status = response.body();
         } while (status.getStatus() != DIAWI_OK && status.getStatus() != DIAWI_ERROR_);
         return status;
+    }
+
+    public StatusResponse uploadFileAndWaitForResponse(File file) throws IOException {
+        UploadResponse uploadResponse = uploadFile(file);
+        return getJobFinalStatus(uploadResponse.getJob());
     }
 
 }

@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/builderpro/v1")
@@ -49,7 +50,7 @@ public class FileController {
     public ResponseEntity<List<FileDTO>> getFiles(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
         try {
             AuthenticationHelper.Authorize(token);
-        } catch(Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity<>(fileService.getFiles(), HttpStatus.OK);
@@ -59,24 +60,23 @@ public class FileController {
     public ResponseEntity<FileDTO> getFile(@PathVariable("id") Integer id, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
         try {
             AuthenticationHelper.Authorize(token);
-        } catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity<>(fileService.getFile(id), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/SendAppToFtp", produces=MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/SendAppToFtp", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<IdDTO> SendAppToFtp(@RequestPart("file") MultipartFile file, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
         if (file != null) {
             try {
                 try {
                     AuthenticationHelper.Authorize(token);
-                } catch (Exception e){
-                    return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+                } catch (Exception e) {
+                    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
                 }
                 File savedFile = multipartFileParser.parseMultipartFileToFile(file);
-                UploadResponse uploadResponse = diawiService.uploadFile(savedFile);
-                StatusResponse status = diawiService.getJobFinalStatus(uploadResponse.getJob());
+                StatusResponse status = diawiService.uploadFileAndWaitForResponse(savedFile);
                 if (status.getStatus() == 2000) {
                     Map<String, String> applicationInfo = appNameParser.parseApk(savedFile.getName(), status);
                     ProjectEntity project = projectService.findOrAddProject(applicationInfo);
@@ -102,8 +102,8 @@ public class FileController {
     public ResponseEntity<Void> ChangeFileStatus(@PathVariable("id") Integer id, @RequestBody FileStatusUpdateRequest request, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
         try {
             AuthenticationHelper.Authorize(token);
-        } catch (Exception e){
-            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         try {
             fileService.updateFileStatus(id, request.getStatusId());
@@ -113,4 +113,35 @@ public class FileController {
         }
     }
 
+
+    //TODO add endpoint
+//    @PostMapping(value = "/file/{id}/refresh")
+//    public ResponseEntity<Void> RefreshDiawiLink(@PathVariable("id") Integer id, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
+//        try {
+//            AuthenticationHelper.Authorize(token);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//        }
+//        try {
+//            FileEntity fileEntity = fileService.findById(id);
+//            if (fileEntity != null) {
+//                File filen = new File(".");
+//                File file = new File(multipartFileParser.DIRECTORY_PATH + fileEntity.getFileName());
+//                StatusResponse status = diawiService.uploadFileAndWaitForResponse(file);
+//                if (status.getStatus() == 2000) {
+//                    return new ResponseEntity<>(HttpStatus.OK);
+//                } else if (status.getStatus() == 4000) {
+//                    if (!file.delete()) {
+//                        System.err.println("File could not be deleted. Something went wrong.");
+//                    } else {
+//                        System.err.println("File was deleted");
+//                    }
+//                }
+//            }
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+//        }
+//        return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+//    }
 }
