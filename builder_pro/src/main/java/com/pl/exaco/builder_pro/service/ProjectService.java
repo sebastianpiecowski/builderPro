@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProjectService {
@@ -25,11 +26,17 @@ public class ProjectService {
         return  projectRepository.findByName(name);
     }
 
-    public Integer findOrAddProject(String projectName) {
-        ProjectEntity project=projectRepository.findByName(projectName);
+    public Integer findOrAddProject(Map<String, String> projectInfo) {
+        ProjectEntity project=projectRepository.findByName(projectInfo.get("ProjectName"));
         if(project==null) {
             ProjectEntity projectEntity=new ProjectEntity();
-            projectEntity.set
+            projectEntity.setName(projectInfo.get("ProjectName"));
+            projectEntity.setLastBuildFileName(projectInfo.get("FileName"));
+            projectRepository.save(projectEntity);
+            return projectEntity.getId();
+        }
+        else {
+            return project.getId();
         }
     }
 }

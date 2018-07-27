@@ -7,5 +7,5 @@ import org.springframework.stereotype.Service;
 public class FlavorService {
 //
 //	@Autowired
-//	private FlavorRepository flavorRepository;
+//	private FlavorDictRepository flavorRepository;
 }

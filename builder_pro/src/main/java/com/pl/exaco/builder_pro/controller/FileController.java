@@ -72,10 +72,11 @@ public class FileController {
             if (status.getStatus() == 2000) {
                 Map<String,String> applicationInfo=appNameParser.parseApk(newFile.getName(), status);
 
-                projectService.findOrAddProject(applicationInfo.get("ProjectName"));
+                int projectId=projectService.findOrAddProject(applicationInfo);
+                int buildId=buildService.findOrAddBuild(projectId, applicationInfo);
 
-
-
+                System.out.println(projectId);
+               // System.out.println(buildId);
                 return new ResponseEntity<>(HttpStatus.OK);
 
             } else {
@@ -165,10 +166,11 @@ public class FileController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        File newFile = new File("storage/" + file.getOriginalFilename());
-        newFile.getParentFile().mkdirs();
+
+        File newFile=null;
         FileOutputStream fos;
         try {
+            newFile = new File("storage/" + file.getOriginalFilename());
             fos = new FileOutputStream(newFile);
             fos.write(file.getBytes());
             fos.close();
