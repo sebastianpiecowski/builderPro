@@ -12,7 +12,6 @@ public class StatusService {
     private StatusRepository statusRepository;
 
     public StatusDictDTO getStatusDict() {
-
         StatusDictDTO statusDictDTO = new StatusDictDTO();
         statusDictDTO.setStatuses(statusRepository.findAll());
         return statusDictDTO;

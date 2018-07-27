@@ -5,6 +5,7 @@ import com.pl.exaco.builder_pro.entity.ProjectEntity;
 import com.pl.exaco.builder_pro.repository.BuildDictRepository;
 import com.pl.exaco.builder_pro.repository.FlavorDictRepository;
 import com.pl.exaco.builder_pro.repository.ProjectRepository;
+import com.pl.exaco.builder_pro.utils.appNameParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,36 +17,37 @@ import java.util.Map;
 @Service
 public class BuildService {
 
-	@Autowired
-	BuildRepository buildRepository;
-	@Autowired
-	BuildDictRepository buildDictRepository;
-	@Autowired
-	FlavorDictRepository flavorDictRepository;
-	@Autowired
-	ProjectRepository projectRepository;
-	public List<BuildEntity> getAll(){
-		return buildRepository.findAll();
-	};
+    @Autowired
+    BuildRepository buildRepository;
+    @Autowired
+    BuildDictRepository buildDictRepository;
+    @Autowired
+    FlavorDictRepository flavorDictRepository;
+    @Autowired
+    ProjectRepository projectRepository;
 
-	public BuildEntity findById(int id) {
-		return buildRepository.findById(id);
-	};
+    public List<BuildEntity> getAll() {
+        return buildRepository.findAll();
+    }
 
-    public BuildEntity findOrAddBuild(ProjectEntity projectId, Map<String, String> buildInfo) {
-    	BuildEntity buildEntity=buildRepository.findByProjectId_IdAndBuildDictId_NameAndFlavorDictId_Name(projectId.getId(), buildInfo.get("BuildType"), buildInfo.get("Flavor"));
-    	if(buildEntity==null) {
-    		BuildEntity newBuildEntity=new BuildEntity();
-    		newBuildEntity.setBuildDictId(buildDictRepository.findByName(buildInfo.get("BuildType")));
-    		newBuildEntity.setFlavorDictId(flavorDictRepository.findByName(buildInfo.get("Flavor")));
-    		newBuildEntity.setProjectId(projectId);
+    public BuildEntity findById(int id) {
+        return buildRepository.findById(id);
+    }
 
-    		buildRepository.save(newBuildEntity);
-    		return newBuildEntity;
-		}
-		else {
-    		return buildEntity;
-		}
-    };
+    public BuildEntity findOrAddBuild(ProjectEntity project, Map<String, String> buildInfo) {
+        BuildEntity buildEntity = buildRepository.findByProjectId_IdAndBuildDictId_NameAndFlavorDictId_Name(project.getId(), buildInfo.get(appNameParser.BUILD_TYPE), buildInfo.get(appNameParser.FLAVOR));
+        if (buildEntity == null) {
+            BuildEntity newBuildEntity = new BuildEntity();
+            newBuildEntity.setProjectId(project);
+            newBuildEntity.setBuildDictId(buildDictRepository.findByName(buildInfo.get(appNameParser.BUILD_TYPE)));
+            newBuildEntity.setFlavorDictId(flavorDictRepository.findByName(buildInfo.get(appNameParser.FLAVOR)));
+            buildRepository.save(newBuildEntity);
+            return newBuildEntity;
+        } else {
+            return buildEntity;
+        }
+    }
+
+    ;
 
 }

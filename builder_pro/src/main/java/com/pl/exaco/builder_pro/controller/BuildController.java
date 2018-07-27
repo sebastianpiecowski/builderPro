@@ -12,7 +12,5 @@ public class BuildController {
 
 	@Autowired
 	private BuildService buildService;
-	
-	
-	
+
 }
