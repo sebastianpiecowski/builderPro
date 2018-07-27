@@ -30,18 +30,16 @@ public class FileService {
 
     private ModelMapper modelMapper;
     public List<FileDTO> getFiles() {
-        modelMapper=new ModelMapper();
         List<FileDTO> list=new ArrayList<>();
         List<FileEntity> files=fileRepository.findAll();
         files.forEach(e-> {
-            list.add(modelMapper.map(e, FileDTO.class));
+            list.add(new FileDTO(e));
         });
         return list;
     }
 
     public FileDTO getFile(int id) {
-        modelMapper=new ModelMapper();
-        return modelMapper.map(fileRepository.findById(id),FileDTO.class);
+        return new FileDTO(fileRepository.findById(id));
     }
 
     public Integer addFile(BuildEntity buildEntity, Map<String,String> applicationInfo) {
