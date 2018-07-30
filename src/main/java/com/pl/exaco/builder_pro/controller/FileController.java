@@ -115,33 +115,33 @@ public class FileController {
 
 
     //TODO add endpoint
-//    @PostMapping(value = "/file/{id}/refresh")
-//    public ResponseEntity<Void> RefreshDiawiLink(@PathVariable("id") Integer id, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
-//        try {
-//            AuthenticationHelper.Authorize(token);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//        }
-//        try {
-//            FileEntity fileEntity = fileService.findById(id);
-//            if (fileEntity != null) {
-//                File filen = new File(".");
-//                File file = new File(multipartFileParser.DIRECTORY_PATH + fileEntity.getFileName());
-//                StatusResponse status = diawiService.uploadFileAndWaitForResponse(file);
-//                if (status.getStatus() == 2000) {
-//                    return new ResponseEntity<>(HttpStatus.OK);
-//                } else if (status.getStatus() == 4000) {
-//                    if (!file.delete()) {
-//                        System.err.println("File could not be deleted. Something went wrong.");
-//                    } else {
-//                        System.err.println("File was deleted");
-//                    }
-//                }
-//            }
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
-//        }
-//        return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
-//    }
+    @PostMapping(value = "/file/{id}/refresh")
+    public ResponseEntity<Void> RefreshDiawiLink(@PathVariable("id") Integer id, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
+        try {
+            AuthenticationHelper.Authorize(token);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            FileEntity fileEntity = fileService.findById(id);
+            if (fileEntity != null) {
+                File file = new File(multipartFileParser.DIRECTORY_PATH + fileEntity.getFileName());
+                StatusResponse status = diawiService.uploadFileAndWaitForResponse(file);
+                if (status.getStatus() == 2000) {
+                    fileService.updateFileDiawiLink(fileEntity.getId(), status.getLink());
+                    return new ResponseEntity<>(HttpStatus.OK);
+                } else if (status.getStatus() == 4000) {
+                    if (!file.delete()) {
+                        System.err.println("File could not be deleted. Something went wrong.");
+                    } else {
+                        System.err.println("File was deleted");
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+        return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+    }
 }
