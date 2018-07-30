@@ -93,7 +93,7 @@ public class ProjectService {
         if (project == null) {
             ProjectEntity projectEntity = new ProjectEntity();
             projectEntity.setName(projectInfo.get(AppNameParser.PROJECT_NAME));
-            projectEntity.setLastBuildFileName(projectInfo.get(AppNameParser.FILE_NAME));
+            projectEntity.setLastBuildFilename(projectInfo.get(AppNameParser.FILE_NAME));
             projectRepository.save(projectEntity);
             return projectEntity;
         } else {

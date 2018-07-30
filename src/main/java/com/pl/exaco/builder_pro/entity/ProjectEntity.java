@@ -25,6 +25,6 @@ public class ProjectEntity implements Serializable {
     @Column(name="Thumbnail")
     private String thumbnail;
     @Column(name="LastBuildFileName")
-    private String lastBuildFileName;
+    private String lastBuildFilename;
 
 }
