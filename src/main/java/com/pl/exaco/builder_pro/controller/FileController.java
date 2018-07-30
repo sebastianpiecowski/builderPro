@@ -12,9 +12,9 @@ import com.pl.exaco.builder_pro.service.ProjectService;
 import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
 import com.pl.exaco.builder_pro.utils.AppNameParser;
 import com.pl.exaco.builder_pro.utils.Configuration;
+import com.pl.exaco.builder_pro.utils.FileAdapter;
 import com.pl.exaco.builder_pro.utils.diawi.DiawiService;
 import com.pl.exaco.builder_pro.utils.diawi.StatusResponse;
-import com.pl.exaco.builder_pro.utils.MultipartFileParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -69,7 +69,7 @@ public class FileController {
                 } catch (Exception e) {
                     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
                 }
-                File savedFile = MultipartFileParser.parseMultipartFileToFile(file);
+                File savedFile = FileAdapter.parseMultipartFileToFile(file);
                 StatusResponse status = diawiService.uploadFileAndWaitForResponse(savedFile);
                 if (status.getStatus() == 2000) {
                     Map<String, String> applicationInfo = AppNameParser.parseApk(savedFile.getName(), status);
@@ -117,7 +117,7 @@ public class FileController {
         try {
             FileEntity fileEntity = fileService.findById(id);
             if (fileEntity != null) {
-                File file = new File(MultipartFileParser.DIRECTORY_PATH + fileEntity.getFileName());
+                File file = new File(Configuration.DIRECTORY_PATH + fileEntity.getFileName());
                 StatusResponse status = diawiService.uploadFileAndWaitForResponse(file);
                 if (status.getStatus() == 2000) {
                     fileService.updateFileDiawiLink(fileEntity.getId(), status.getLink());

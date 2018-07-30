@@ -10,7 +10,6 @@ public interface FileRepository extends JpaRepository<FileEntity, Integer> {
     FileEntity findById(int id);
     List<FileEntity> findByBuildId_Id(int id);
     List<FileEntity> findByBuildIdProjectId_Id(int id);
-
     //3 ostatnie pliku buildu
     //    List<FileEntity> findByBuildId_IdOrderByUploadDateDesc(int id);
 
