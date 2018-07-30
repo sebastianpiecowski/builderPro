@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,57 +34,6 @@ public class ProjectService {
         return projectsDTO;
     }
 
-    public ProjectDTO getProject(int id) {
-        ProjectEntity projectEntity = projectRepository.findById(id);
-        ProjectDTO projectDTO = new ProjectDTO();
-        List<FlavorDTO> flavors = new ArrayList<>();
-        if (projectEntity != null) {
-            projectDTO.setProjectName(projectEntity.getName());
-            System.out.println(projectDTO.getProjectName());
-
-
-            List<BuildEntity> listOfBuilds = buildRepository.findByProjectId_Id(projectEntity.getId());
-            //set unikalnych buildow flavor(nazwy)
-
-
-            listOfBuilds.forEach(e -> {
-                        FlavorDTO flavor = new FlavorDTO();
-                        flavor.setName(e.getFlavorDictId().getName());
-
-                        List<TypeDTO> types = new ArrayList<>();
-
-                        TypeDTO typeDTO = new TypeDTO();
-                        typeDTO.setName(e.getBuildDictId().getName());
-                        //metoda repo do sortowania po upload date - wybieranie 3 ostatnich plików buildu
-                        //List<FileEntity> files = fileRespository.findByBuildId_IdOrderByUploadDateDesc(e.getId());
-                        List<FileEntity> files = fileRespository.findByBuildId_Id(e.getId());
-                        List<FlavorFileDTO> flavorFiles = new ArrayList<>();
-
-                        files.forEach(f -> {
-                            FlavorFileDTO flavorFile = new FlavorFileDTO();
-                            flavorFile.setId(f.getId());
-                            flavorFile.setFileName(f.getFileName());
-                            flavorFile.setUploadTimestamp(f.getUploadDate().getTime());
-                            flavorFile.setUploadDate(DatetimeParser.parseToString(f.getUploadDate()));
-                            try {
-                                flavorFile.setStatusName(f.getStatusId().getName());
-                            } catch (NullPointerException ne) {
-                                //optional
-                            }
-                            flavorFiles.add(flavorFile);
-                        });
-                        typeDTO.setFiles(flavorFiles);
-                        types.add(typeDTO);
-                        flavor.setTypes(types);
-                        flavors.add(flavor);
-
-                    }
-            );
-            projectDTO.setFlavors(flavors);
-        }
-        return projectDTO;
-    }
-
     public ProjectEntity getProjectByName(String name) {
         return projectRepository.findByName(name);
     }
@@ -100,4 +50,92 @@ public class ProjectService {
             return project;
         }
     }
+
+    public ProjectDTO getProject(int id) {
+        ProjectEntity projectEntity = projectRepository.findById(id);
+        ProjectDTO projectDTO = new ProjectDTO();
+        List<FlavorDTO> flavors = new ArrayList<>();
+        if (projectEntity != null) {
+            projectDTO.setProjectName(projectEntity.getName());
+            HashMap<String, HashMap<String, List<BuildEntity>>> map = getProjectHashMap(projectEntity);
+
+            map.forEach((flavorName, buildTypes) -> {
+                FlavorDTO flavor = new FlavorDTO();
+                flavor.setTypes(new ArrayList<>());
+                flavor.setName(flavorName);
+
+                buildTypes.forEach((buildName, fileRepresentation) -> {
+                    TypeDTO type = new TypeDTO();
+                    type.setName(buildName);
+                    List<FlavorFileDTO> buildFiles = getFilesForListOfBuilds(fileRepresentation);
+                    type.setFiles(buildFiles);
+                    flavor.getTypes().add(type);
+                });
+
+                flavors.add(flavor);
+            });
+            projectDTO.setFlavors(flavors);
+
+        }
+        return projectDTO;
+    }
+
+    private List<FlavorFileDTO> getFilesForListOfBuilds(List<BuildEntity> fileRepresentation) {
+        List<FlavorFileDTO> flavorFiles = new ArrayList<>();
+        for (BuildEntity buildEntity : fileRepresentation) {
+            List<FileEntity> files = fileRespository.findByBuildId_Id(buildEntity.getId());
+            files.forEach(f -> {
+                FlavorFileDTO flavorFile = new FlavorFileDTO();
+                flavorFile.setId(f.getId());
+                flavorFile.setFileName(f.getFileName());
+                flavorFile.setUploadTimestamp(f.getUploadDate().getTime());
+                flavorFile.setUploadDate(DatetimeParser.parseToString(f.getUploadDate()));
+                try {
+                    flavorFile.setStatusName(f.getStatusId().getName());
+                } catch (NullPointerException ne) {
+                    //optional
+                }
+                flavorFiles.add(flavorFile);
+            });
+        }
+        return flavorFiles;
+    }
+
+    private HashMap<String, HashMap<String, List<BuildEntity>>> getProjectHashMap(ProjectEntity projectEntity) {
+        //TODO optimize (use streams?)
+        List<BuildEntity> builds = buildRepository.findByProjectId_Id(projectEntity.getId());
+
+        // create {flavorName, {buildName, List<BuildEntity>} }
+        HashMap<String, HashMap<String, List<BuildEntity>>> flavors = new HashMap<>();
+        builds.stream().forEach(buildEntity -> {
+
+            //Extract useful fields
+            String flavorName = buildEntity.getFlavorDictId().getName();
+            String buildName = buildEntity.getBuildDictId().getName();
+            HashMap<String, List<BuildEntity>> buildTypes;
+            List<BuildEntity> fileRepresentations;
+
+            // create {buildName, List<BuildEntity> }
+            if (flavors.containsKey(flavorName)) {
+                buildTypes = flavors.get(flavorName);
+                if (buildTypes.containsKey(buildName)) {
+                    buildTypes.get(buildName).add(buildEntity);
+                } else {
+                    fileRepresentations = new ArrayList<>();
+                    fileRepresentations.add(buildEntity);
+                    buildTypes.put(buildName, fileRepresentations);
+                }
+            } else {
+                buildTypes = new HashMap<>();
+                fileRepresentations = new ArrayList<>();
+                fileRepresentations.add(buildEntity);
+                buildTypes.put(buildName, fileRepresentations);
+                flavors.put(flavorName, buildTypes);
+
+            }
+        });
+        return flavors;
+    }
+
+
 }

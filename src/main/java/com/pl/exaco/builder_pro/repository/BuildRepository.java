@@ -1,6 +1,7 @@
 package com.pl.exaco.builder_pro.repository;
 
 import com.pl.exaco.builder_pro.entity.BuildEntity;
+import com.pl.exaco.builder_pro.entity.FileEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -12,4 +13,5 @@ public interface BuildRepository extends JpaRepository<BuildEntity, Integer> {
     BuildEntity findByProjectId_IdAndBuildDictId_NameAndFlavorDictId_Name(int projectId, String buildDictName, String flavorDictName);
 
     List<BuildEntity> findByProjectId_Id(int projectId);
+
 }
