@@ -6,6 +6,7 @@ import com.pl.exaco.builder_pro.entity.ProjectEntity;
 import com.pl.exaco.builder_pro.service.FileService;
 import com.pl.exaco.builder_pro.service.ProjectService;
 import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
+import com.pl.exaco.builder_pro.utils.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/builderpro/v1")
+@RequestMapping(value = Configuration.VERSION)
 public class ProjectController {
 
     @Autowired
@@ -23,7 +24,7 @@ public class ProjectController {
     private FileService fileService;
 
     @GetMapping(value = "/project")
-    public ResponseEntity<ProjectsDTO> getProjects(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
+    private ResponseEntity<ProjectsDTO> getProjects(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
         try {
             AuthenticationHelper.Authorize(token);
         } catch (Exception e) {
@@ -33,7 +34,7 @@ public class ProjectController {
     }
 
     @GetMapping(value = "/project/{id}")
-    public ResponseEntity<ProjectDTO> getProject(@PathVariable("id") Integer id, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
+    private ResponseEntity<ProjectDTO> getProject(@PathVariable("id") Integer id, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
         try {
             AuthenticationHelper.Authorize(token);
 

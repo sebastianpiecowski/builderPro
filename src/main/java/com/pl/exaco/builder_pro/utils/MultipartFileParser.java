@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class multipartFileParser {
+public class MultipartFileParser {
 
     public static final String DIRECTORY_PATH="storage/";
 

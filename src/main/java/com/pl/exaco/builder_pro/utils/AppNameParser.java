@@ -5,7 +5,7 @@ import com.pl.exaco.builder_pro.utils.diawi.StatusResponse;
 import java.util.HashMap;
 import java.util.Map;
 
-public class appNameParser {
+public class AppNameParser {
 
 
     public static final String PROJECT_NAME = "ProjectName";

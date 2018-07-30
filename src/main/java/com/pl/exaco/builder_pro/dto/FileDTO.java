@@ -1,7 +1,7 @@
 package com.pl.exaco.builder_pro.dto;
 
 import com.pl.exaco.builder_pro.entity.FileEntity;
-import com.pl.exaco.builder_pro.utils.datetimeParser;
+import com.pl.exaco.builder_pro.utils.DatetimeParser;
 import lombok.Data;
 
 @Data
@@ -19,7 +19,7 @@ public class FileDTO {
         fileName=fileEntity.getFileName();
         projectName=fileEntity.getBuildId().getProjectId().getName();
         uploadTimestamp=fileEntity.getUploadDate().getTime();
-        uploadDate=datetimeParser.parseToString(fileEntity.getUploadDate());
+        uploadDate=DatetimeParser.parseToString(fileEntity.getUploadDate());
         diawiData=new DiawiDataDTO();
         diawiData.setUrl(fileEntity.getDiawiUrl());
         diawiData.setExpirationDate(fileEntity.getExpirationDate());

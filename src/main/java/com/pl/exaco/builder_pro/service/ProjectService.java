@@ -7,8 +7,8 @@ import com.pl.exaco.builder_pro.entity.ProjectEntity;
 import com.pl.exaco.builder_pro.repository.BuildRepository;
 import com.pl.exaco.builder_pro.repository.FileRepository;
 import com.pl.exaco.builder_pro.repository.ProjectRepository;
-import com.pl.exaco.builder_pro.utils.appNameParser;
-import com.pl.exaco.builder_pro.utils.datetimeParser;
+import com.pl.exaco.builder_pro.utils.AppNameParser;
+import com.pl.exaco.builder_pro.utils.DatetimeParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +54,8 @@ public class ProjectService {
 
                         TypeDTO typeDTO = new TypeDTO();
                         typeDTO.setName(e.getBuildDictId().getName());
+                        //metoda repo do sortowania po upload date - wybieranie 3 ostatnich plików buildu
+                        //List<FileEntity> files = fileRespository.findByBuildId_IdOrderByUploadDateDesc(e.getId());
                         List<FileEntity> files = fileRespository.findByBuildId_Id(e.getId());
                         List<FlavorFileDTO> flavorFiles = new ArrayList<>();
 
@@ -62,7 +64,7 @@ public class ProjectService {
                             flavorFile.setId(f.getId());
                             flavorFile.setFileName(f.getFileName());
                             flavorFile.setUploadTimestamp(f.getUploadDate().getTime());
-                            flavorFile.setUploadDate(datetimeParser.parseToString(f.getUploadDate()));
+                            flavorFile.setUploadDate(DatetimeParser.parseToString(f.getUploadDate()));
                             try {
                                 flavorFile.setStatusName(f.getStatusId().getName());
                             } catch (NullPointerException ne) {
@@ -87,11 +89,11 @@ public class ProjectService {
     }
 
     public ProjectEntity findOrAddProject(Map<String, String> projectInfo) {
-        ProjectEntity project = projectRepository.findByName(projectInfo.get(appNameParser.PROJECT_NAME));
+        ProjectEntity project = projectRepository.findByName(projectInfo.get(AppNameParser.PROJECT_NAME));
         if (project == null) {
             ProjectEntity projectEntity = new ProjectEntity();
-            projectEntity.setName(projectInfo.get(appNameParser.PROJECT_NAME));
-            projectEntity.setLastBuildFileName(projectInfo.get(appNameParser.FILE_NAME));
+            projectEntity.setName(projectInfo.get(AppNameParser.PROJECT_NAME));
+            projectEntity.setLastBuildFileName(projectInfo.get(AppNameParser.FILE_NAME));
             projectRepository.save(projectEntity);
             return projectEntity;
         } else {

@@ -3,6 +3,7 @@ package com.pl.exaco.builder_pro.controller;
 import com.pl.exaco.builder_pro.dto.StatusDictDTO;
 import com.pl.exaco.builder_pro.service.StatusService;
 import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
+import com.pl.exaco.builder_pro.utils.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/builderpro/v1")
+@RequestMapping(value = Configuration.VERSION)
 public class StatusController {
 
     @Autowired
     private StatusService statusService;
 
     @GetMapping(value = "/status")
-    public ResponseEntity<StatusDictDTO> getProjects(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
+    private ResponseEntity<StatusDictDTO> getProjects(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
         try {
             AuthenticationHelper.Authorize(token);
         } catch (Exception e){

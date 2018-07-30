@@ -1,11 +1,12 @@
 package com.pl.exaco.builder_pro.service;
 
+import com.pl.exaco.builder_pro.entity.BuildDictEntity;
 import com.pl.exaco.builder_pro.entity.BuildEntity;
 import com.pl.exaco.builder_pro.entity.ProjectEntity;
 import com.pl.exaco.builder_pro.repository.BuildDictRepository;
 import com.pl.exaco.builder_pro.repository.FlavorDictRepository;
 import com.pl.exaco.builder_pro.repository.ProjectRepository;
-import com.pl.exaco.builder_pro.utils.appNameParser;
+import com.pl.exaco.builder_pro.utils.AppNameParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +19,13 @@ import java.util.Map;
 public class BuildService {
 
     @Autowired
-    BuildRepository buildRepository;
+    private BuildRepository buildRepository;
     @Autowired
-    BuildDictRepository buildDictRepository;
+    private BuildDictRepository buildDictRepository;
     @Autowired
-    FlavorDictRepository flavorDictRepository;
+    private FlavorDictRepository flavorDictRepository;
     @Autowired
-    ProjectRepository projectRepository;
+    public ProjectRepository projectRepository;
 
     public List<BuildEntity> getAll() {
         return buildRepository.findAll();
@@ -35,12 +36,12 @@ public class BuildService {
     }
 
     public BuildEntity findOrAddBuild(ProjectEntity project, Map<String, String> buildInfo) {
-        BuildEntity buildEntity = buildRepository.findByProjectId_IdAndBuildDictId_NameAndFlavorDictId_Name(project.getId(), buildInfo.get(appNameParser.BUILD_TYPE), buildInfo.get(appNameParser.FLAVOR));
+        BuildEntity buildEntity = buildRepository.findByProjectId_IdAndBuildDictId_NameAndFlavorDictId_Name(project.getId(), buildInfo.get(AppNameParser.BUILD_TYPE), buildInfo.get(AppNameParser.FLAVOR));
         if (buildEntity == null) {
             BuildEntity newBuildEntity = new BuildEntity();
             newBuildEntity.setProjectId(project);
-            newBuildEntity.setBuildDictId(buildDictRepository.findByName(buildInfo.get(appNameParser.BUILD_TYPE)));
-            newBuildEntity.setFlavorDictId(flavorDictRepository.findByName(buildInfo.get(appNameParser.FLAVOR)));
+            newBuildEntity.setBuildDictId(buildDictRepository.findByName(buildInfo.get(AppNameParser.BUILD_TYPE)));
+            newBuildEntity.setFlavorDictId(flavorDictRepository.findByName(buildInfo.get(AppNameParser.FLAVOR)));
             buildRepository.save(newBuildEntity);
             return newBuildEntity;
         } else {
@@ -48,6 +49,9 @@ public class BuildService {
         }
     }
 
-    ;
+    public List<BuildDictEntity> getBuildDict(){
+        return buildDictRepository.findAll();
+    }
+
 
 }

@@ -3,18 +3,13 @@ package com.pl.exaco.builder_pro.service;
 import com.pl.exaco.builder_pro.entity.BuildEntity;
 import com.pl.exaco.builder_pro.entity.FileEntity;
 import com.pl.exaco.builder_pro.dto.FileDTO;
-import com.pl.exaco.builder_pro.entity.FileEntity;
 import com.pl.exaco.builder_pro.entity.StatusDictEntity;
 import com.pl.exaco.builder_pro.repository.FileRepository;
 import com.pl.exaco.builder_pro.repository.StatusRepository;
-import com.pl.exaco.builder_pro.utils.appNameParser;
-import org.apache.james.mime4j.field.datetime.DateTime;
-import org.apache.tomcat.jni.File;
+import com.pl.exaco.builder_pro.utils.AppNameParser;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.ModelMap;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -48,8 +43,8 @@ public class FileService {
 
         FileEntity fileEntity = new FileEntity();
         fileEntity.setBuildId(buildEntity);
-        fileEntity.setFileName(applicationInfo.get(appNameParser.FILE_NAME));
-        fileEntity.setDiawiUrl(applicationInfo.get(appNameParser.DIAWI_URL));
+        fileEntity.setFileName(applicationInfo.get(AppNameParser.FILE_NAME));
+        fileEntity.setDiawiUrl(applicationInfo.get(AppNameParser.DIAWI_URL));
         Timestamp uploadTimestamp = new Timestamp(System.currentTimeMillis());
         fileEntity.setUploadDate(uploadTimestamp);
         Calendar cal = Calendar.getInstance();
