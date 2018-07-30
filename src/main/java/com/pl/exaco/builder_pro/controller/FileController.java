@@ -122,12 +122,6 @@ public class FileController {
                 if (status.getStatus() == 2000) {
                     fileService.updateFileDiawiLink(fileEntity.getId(), status.getLink());
                     return new ResponseEntity<>(HttpStatus.OK);
-                } else if (status.getStatus() == 4000) {
-                    if (!file.delete()) {
-                        System.err.println("File could not be deleted. Something went wrong.");
-                    } else {
-                        System.err.println("File was deleted");
-                    }
                 }
             }
         } catch (Exception ex) {
