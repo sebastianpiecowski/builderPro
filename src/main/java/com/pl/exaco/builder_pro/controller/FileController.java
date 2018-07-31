@@ -59,7 +59,6 @@ public class FileController {
         }
         return new ResponseEntity<>(fileService.getFile(id), HttpStatus.OK);
     }
-
     @PostMapping(value = "/SendAppToFtp", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<IdDTO> SendAppToFtp(@RequestPart("file") MultipartFile file, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
         if (file != null) {

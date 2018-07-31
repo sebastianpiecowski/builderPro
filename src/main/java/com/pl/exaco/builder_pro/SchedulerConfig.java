@@ -2,7 +2,6 @@ package com.pl.exaco.builder_pro;
 
 import com.pl.exaco.builder_pro.dto.FileDTO;
 import com.pl.exaco.builder_pro.service.FileService;
-import com.pl.exaco.builder_pro.utils.MultipartFileParser;
 import com.pl.exaco.builder_pro.utils.diawi.DiawiService;
 import com.pl.exaco.builder_pro.utils.diawi.StatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class SchedulerConfig {
         for (FileDTO file : files) {
             if (file != null) {
                 try {
-                    File physicalFile = new File(MultipartFileParser.DIRECTORY_PATH + file.getFileName());
+                    File physicalFile = new File(com.pl.exaco.builder_pro.utils.Configuration.DIRECTORY_PATH + file.getFileName());
                     StatusResponse status = diawiService.uploadFileAndWaitForResponse(physicalFile);
                     if (status.getStatus() == 2000) {
                         fileService.updateFileDiawiLink(file.getId(), status.getLink());

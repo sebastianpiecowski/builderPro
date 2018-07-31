@@ -1,29 +1,32 @@
 package com.pl.exaco.builder_pro.service;
 
+import com.pl.exaco.builder_pro.dto.FileDTO;
 import com.pl.exaco.builder_pro.entity.BuildEntity;
 import com.pl.exaco.builder_pro.entity.FileEntity;
-import com.pl.exaco.builder_pro.dto.FileDTO;
 import com.pl.exaco.builder_pro.entity.StatusDictEntity;
 import com.pl.exaco.builder_pro.repository.FileRepository;
 import com.pl.exaco.builder_pro.repository.StatusRepository;
 import com.pl.exaco.builder_pro.utils.AppNameParser;
+import com.pl.exaco.builder_pro.utils.Configuration;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class FileService {
 
+    private static final int NUMBER_OF_DAYS = 3;
     @Autowired
     private FileRepository fileRepository;
     @Autowired
     private StatusRepository statusRepository;
-
-    private static final int NUMBER_OF_DAYS = 3;
-
     private ModelMapper modelMapper;
 
     public List<FileDTO> getFiles() {
@@ -35,12 +38,34 @@ public class FileService {
         return list;
     }
 
+    public FileEntity getLastFileQuery(int id) {
+        return fileRepository.findFirstByBuildId_IdOrderByUploadDate(id);
+    }
+
     public FileDTO getFile(int id) {
         return new FileDTO(fileRepository.findById(id));
     }
 
     public Integer addFile(BuildEntity buildEntity, Map<String, String> applicationInfo) {
+        Integer count = fileRepository.countOfBuild(buildEntity.getId());
+        if (count < 3) {
+            FileEntity fileEntity = addApkToStorage(buildEntity, applicationInfo);
+            return fileEntity.getId();
+        } else {
+            FileEntity fileEntity = fileRepository.findFirstByBuildId_IdOrderByUploadDate(buildEntity.getId());
+            File file = new File(Configuration.DIRECTORY_PATH + fileEntity.getFileName());
+            if (file.delete()) {
+                fileRepository.delete(fileEntity);
+                FileEntity newFile = addApkToStorage(buildEntity, applicationInfo);
+                return newFile.getId();
+            } else {
+                return -1;
+            }
 
+        }
+    }
+
+    private FileEntity addApkToStorage(BuildEntity buildEntity, Map<String, String> applicationInfo) {
         FileEntity fileEntity = new FileEntity();
         fileEntity.setBuildId(buildEntity);
         fileEntity.setFileName(applicationInfo.get(AppNameParser.FILE_NAME));
@@ -55,7 +80,7 @@ public class FileService {
         fileEntity.setStatusId(statusRepository.findById(1));
         //TODO SET STATUS_ID
         fileRepository.save(fileEntity);
-        return fileEntity.getId();
+        return fileEntity;
     }
 
 
@@ -84,7 +109,7 @@ public class FileService {
         }
     }
 
-    public List<FileEntity> getFilesByProjectId(int id){
+    public List<FileEntity> getFilesByProjectId(int id) {
         return fileRepository.findByBuildIdProjectId_Id(id);
     }
 
