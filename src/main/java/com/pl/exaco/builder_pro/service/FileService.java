@@ -117,4 +117,6 @@ public class FileService {
         return fileRepository.findById(id);
     }
 
+    public void deleteFile(int id) { fileRepository.deleteById(id);}
+
 }
