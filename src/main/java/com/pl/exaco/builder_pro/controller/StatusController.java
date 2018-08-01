@@ -20,7 +20,7 @@ public class StatusController {
     private StatusService statusService;
 
     @GetMapping(value = "/status")
-    private ResponseEntity<StatusDictDTO> getProjects(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
+    private ResponseEntity<StatusDictDTO> getServices(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
         try {
             AuthenticationHelper.Authorize(token);
         } catch (Exception e){

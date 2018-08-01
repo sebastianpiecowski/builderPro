@@ -2,6 +2,7 @@ package com.pl.exaco.builder_pro.controller;
 
 import com.pl.exaco.builder_pro.dto.FileDTO;
 import com.pl.exaco.builder_pro.dto.IdDTO;
+import com.pl.exaco.builder_pro.dto.UpdateFileStatusDTO;
 import com.pl.exaco.builder_pro.entity.BuildEntity;
 import com.pl.exaco.builder_pro.entity.FileEntity;
 import com.pl.exaco.builder_pro.entity.ProjectEntity;
@@ -92,17 +93,16 @@ public class FileController {
     }
 
     @PostMapping(value = "/file/{id}")
-    private ResponseEntity<Void> ChangeFileStatus(@PathVariable("id") Integer id, @RequestBody FileStatusUpdateRequest request, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
+    private ResponseEntity<UpdateFileStatusDTO> ChangeFileStatus(@PathVariable("id") Integer id, @RequestBody FileStatusUpdateRequest request, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
         try {
             AuthenticationHelper.Authorize(token);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         try {
-            fileService.updateFileStatus(id, request.getStatusId());
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(fileService.updateFileStatus(id, request.getStatusId()), HttpStatus.OK);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.pl.exaco.builder_pro.service;
 
 import com.pl.exaco.builder_pro.dto.FileDTO;
+import com.pl.exaco.builder_pro.dto.UpdateFileStatusDTO;
 import com.pl.exaco.builder_pro.entity.BuildEntity;
 import com.pl.exaco.builder_pro.entity.FileEntity;
 import com.pl.exaco.builder_pro.entity.StatusDictEntity;
@@ -84,14 +85,18 @@ public class FileService {
     }
 
 
-    public void updateFileStatus(int fileId, int statusId) {
+    public UpdateFileStatusDTO updateFileStatus(int fileId, int statusId) throws Exception {
         FileEntity fileEntity = fileRepository.findById(fileId);
-        if (fileEntity != null) {
-            StatusDictEntity statusDictEntity = statusRepository.findById(statusId);
-            if (statusDictEntity != null) {
-                fileEntity.setStatusId(statusDictEntity);
-                fileRepository.save(fileEntity);
-            }
+        StatusDictEntity statusDictEntity = statusRepository.findById(statusId);
+        if (statusDictEntity != null) {
+            fileEntity.setStatusId(statusDictEntity);
+            fileRepository.save(fileEntity);
+            UpdateFileStatusDTO result = new UpdateFileStatusDTO();
+            result.setFileId(fileId);
+            result.setStatusName(statusDictEntity.getName());
+            return result;
+        } else {
+            throw new Exception("The given status does not exists.");
         }
     }
 
@@ -117,6 +122,8 @@ public class FileService {
         return fileRepository.findById(id);
     }
 
-    public void deleteFile(int id) { fileRepository.deleteById(id);}
+    public void deleteFile(int id) {
+        fileRepository.deleteById(id);
+    }
 
 }
