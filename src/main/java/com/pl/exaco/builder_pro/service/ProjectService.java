@@ -47,6 +47,7 @@ public class ProjectService {
             projectRepository.save(projectEntity);
             return projectEntity;
         } else {
+            project.setLastBuildFilename(projectInfo.get(AppNameParser.FILE_NAME));
             return project;
         }
     }
