@@ -54,9 +54,10 @@ public class ProjectService {
 
     public ProjectDTO getProject(int id) {
         ProjectEntity projectEntity = projectRepository.findById(id);
-        ProjectDTO projectDTO = new ProjectDTO();
+        ProjectDTO projectDTO = null;
         List<FlavorDTO> flavors = new ArrayList<>();
         if (projectEntity != null) {
+            projectDTO = new ProjectDTO();
             projectDTO.setProjectName(projectEntity.getName());
             HashMap<String, HashMap<String, List<BuildEntity>>> map = getProjectHashMap(projectEntity);
 

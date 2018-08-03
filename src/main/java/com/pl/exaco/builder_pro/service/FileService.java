@@ -54,7 +54,9 @@ public class FileService {
     }
 
     public FileDTO getFile(int id) {
-        return new FileDTO(fileRepository.findById(id));
+        FileEntity fileEntity = fileRepository.findById(id);
+        if(fileEntity == null) return null;
+        return new FileDTO(fileEntity);
     }
 
     @Transactional

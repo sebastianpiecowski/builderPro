@@ -22,7 +22,7 @@ public class FlavorController {
 	@Autowired
 	private FlavorService flavorService;
 
-	@GetMapping(value = "/flavor/dict")
+	@GetMapping(value = "/flavor")
 	private ResponseEntity<List<FlavorDictEntity>> getFlavorDict(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token){
 		try {
 			AuthenticationHelper.Authorize(token);

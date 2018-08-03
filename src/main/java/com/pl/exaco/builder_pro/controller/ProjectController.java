@@ -41,8 +41,8 @@ public class ProjectController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        fileService.getFilesByProjectId(id);
         ProjectDTO project = projectService.getProject(id);
+        if(project == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
 }

@@ -3,15 +3,13 @@ package com.pl.exaco.builder_pro.controller;
 import com.pl.exaco.builder_pro.dto.FileDTO;
 import com.pl.exaco.builder_pro.dto.IdDTO;
 import com.pl.exaco.builder_pro.dto.UpdateFileStatusDTO;
-import com.pl.exaco.builder_pro.entity.BuildEntity;
 import com.pl.exaco.builder_pro.entity.FileEntity;
-import com.pl.exaco.builder_pro.entity.ProjectEntity;
 import com.pl.exaco.builder_pro.model.FileStatusUpdateRequest;
 import com.pl.exaco.builder_pro.service.BuildService;
 import com.pl.exaco.builder_pro.service.FileService;
 import com.pl.exaco.builder_pro.service.ProjectService;
-import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
 import com.pl.exaco.builder_pro.utils.AppNameParser;
+import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
 import com.pl.exaco.builder_pro.utils.Configuration;
 import com.pl.exaco.builder_pro.utils.FileAdapter;
 import com.pl.exaco.builder_pro.utils.diawi.DiawiService;
@@ -23,9 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -35,10 +31,6 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
-    @Autowired
-    private BuildService buildService;
-    @Autowired
-    private ProjectService projectService;
     @Autowired
     private DiawiService diawiService;
 
@@ -59,6 +51,8 @@ public class FileController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        FileDTO fileDto = fileService.getFile(id);
+        if (fileDto == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(fileService.getFile(id), HttpStatus.OK);
     }
 
@@ -75,8 +69,7 @@ public class FileController {
                 Map<String, String> applicationInfo = AppNameParser.parseApk(savedFile.getName());
                 StatusResponse status = diawiService.uploadFileAndWaitForResponse(savedFile);
                 if (status.getStatus() == 2000) {
-                   applicationInfo.put(AppNameParser.DIAWI_URL, status.getLink());
-
+                    applicationInfo.put(AppNameParser.DIAWI_URL, status.getLink());
                     IdDTO id = new IdDTO();
                     id.setId(fileService.storeApk(applicationInfo));
                     return new ResponseEntity<>(id, HttpStatus.OK);
@@ -125,10 +118,9 @@ public class FileController {
                     return new ResponseEntity<>(HttpStatus.OK);
                 }
             }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
-            ex.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
     }
 }
