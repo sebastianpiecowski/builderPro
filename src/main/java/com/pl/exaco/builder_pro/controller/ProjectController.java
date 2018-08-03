@@ -40,6 +40,7 @@ public class ProjectController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         ProjectDTO project = projectService.getProject(id);
+        if(project == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(project, HttpStatus.OK);
     }
 }

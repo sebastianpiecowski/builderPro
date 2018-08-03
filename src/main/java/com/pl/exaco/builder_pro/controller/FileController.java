@@ -9,8 +9,8 @@ import com.pl.exaco.builder_pro.model.FileStatusUpdateRequest;
 import com.pl.exaco.builder_pro.service.BuildService;
 import com.pl.exaco.builder_pro.service.FileService;
 import com.pl.exaco.builder_pro.service.ProjectService;
-import com.pl.exaco.builder_pro.utils.AppNameParser;
 import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
+import com.pl.exaco.builder_pro.utils.AppNameParser;
 import com.pl.exaco.builder_pro.utils.Configuration;
 import com.pl.exaco.builder_pro.utils.FileAdapter;
 import com.pl.exaco.builder_pro.utils.diawi.DiawiService;
@@ -73,7 +73,7 @@ public class FileController {
                 Map<String, String> applicationInfo = AppNameParser.parseApk(savedFile.getName());
                 StatusResponse status = diawiService.uploadFileAndWaitForResponse(savedFile);
                 if (status.getStatus() == 2000) {
-                    applicationInfo.put(AppNameParser.DIAWI_URL, status.getLink());
+                   applicationInfo.put(AppNameParser.DIAWI_URL, status.getLink());
 
                     IdDTO id = new IdDTO();
                     id.setId(fileService.storeApk(applicationInfo));
