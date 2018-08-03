@@ -13,7 +13,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.pl.exaco.builder_pro.utils.Configuration.*;
+import static com.pl.exaco.builder_pro.utils.Configuration.DIRECTORY_PATH;
 
 @Configuration
 @EnableScheduling
@@ -28,7 +28,7 @@ public class SchedulerConfig {
     @Scheduled(cron = "0 1 */2 * * ?")
     public void scheduleTaskUsingCronExpression() {
 
-        List<FileDTO> files = fileService.getFiles();
+        List<FileDTO> files = fileService.getActiveFiles();
 
         for (FileDTO file : files) {
             if (file != null) {
@@ -46,19 +46,19 @@ public class SchedulerConfig {
     }
 
     @Scheduled(cron = "0 * * * * ?")
-    public void synchronizeDatabaseWithStorage(){
+    public void synchronizeDatabaseWithStorage() {
         File directory = new File(DIRECTORY_PATH);
-        List<FileDTO> filesInDatabase = fileService.getFiles();
+        List<FileDTO> filesInDatabase = fileService.getActiveFiles();
         File[] filesInStorage = directory.listFiles();
 
         Arrays.stream(filesInStorage).forEach(f -> {
-            if(!filesInDatabase.stream().anyMatch(f2 -> f2.getFileName().equalsIgnoreCase(f.getName()))){
+            if (!filesInDatabase.stream().anyMatch(f2 -> f2.getFileName().equalsIgnoreCase(f.getName()))) {
                 f.delete();
             }
         });
 
-        filesInDatabase.forEach(f-> {
-            if(!Arrays.stream(filesInStorage).anyMatch(fis -> fis.getName().equalsIgnoreCase(f.getFileName()))) {
+        filesInDatabase.forEach(f -> {
+            if (!Arrays.stream(filesInStorage).anyMatch(fis -> fis.getName().equalsIgnoreCase(f.getFileName()))) {
                 fileService.deleteFile(f.getId());
             }
         });

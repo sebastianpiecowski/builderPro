@@ -6,13 +6,16 @@ import com.pl.exaco.builder_pro.entity.BuildEntity;
 import com.pl.exaco.builder_pro.entity.FileEntity;
 import com.pl.exaco.builder_pro.entity.ProjectEntity;
 import com.pl.exaco.builder_pro.entity.StatusDictEntity;
+import com.pl.exaco.builder_pro.model.FilePaginationRequest;
 import com.pl.exaco.builder_pro.repository.BuildRepository;
 import com.pl.exaco.builder_pro.repository.FileRepository;
 import com.pl.exaco.builder_pro.repository.StatusRepository;
 import com.pl.exaco.builder_pro.utils.AppNameParser;
 import com.pl.exaco.builder_pro.utils.Configuration;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -34,15 +37,43 @@ public class FileService {
     @Autowired
     private BuildRepository buildRepository;
     @Autowired
-    private  ProjectService projectService;
+    private ProjectService projectService;
     @Autowired
     private BuildService buildService;
 
-    private ModelMapper modelMapper;
-
-    public List<FileDTO> getFiles() {
-        List<FileDTO> list = new ArrayList<>();
+    public List<FileDTO> getActiveFiles(){
         List<FileEntity> files = fileRepository.findAll();
+        List<FileDTO> list = new ArrayList<>();
+
+        files.forEach(e -> {
+            list.add(new FileDTO(e));
+        });
+        return list;
+    }
+    public List<FileDTO> getFiles(FilePaginationRequest request) {
+
+
+        int pageOfFiles;
+        int sizeOfFiles;
+        String sortingColumn = null;
+        try {
+            pageOfFiles = request.getPage();
+        } catch (NullPointerException npe) {
+            pageOfFiles = 0;
+        }
+        try {
+            if (request.getSortColumn() != null) {
+                sortingColumn = request.getSortColumn();
+            } else {
+                sortingColumn = "Id";
+            }
+            sizeOfFiles = request.getSize();
+        } catch (NullPointerException npe) {
+            sizeOfFiles = 5;
+        }
+        Page<FileEntity> files = fileRepository.findAll(PageRequest.of(pageOfFiles, sizeOfFiles, Sort.by(sortingColumn)));
+        List<FileDTO> list = new ArrayList<>();
+
         files.forEach(e -> {
             list.add(new FileDTO(e));
         });
@@ -85,9 +116,9 @@ public class FileService {
     }
 
     private FileEntity addApkToStorage(BuildEntity buildEntity, Map<String, String> applicationInfo) {
-        FileEntity dbFile=fileRepository.findByFileName(applicationInfo.get(AppNameParser.FILE_NAME));
-        if (dbFile==null) {
-            dbFile=new FileEntity();
+        FileEntity dbFile = fileRepository.findByFileName(applicationInfo.get(AppNameParser.FILE_NAME));
+        if (dbFile == null) {
+            dbFile = new FileEntity();
             dbFile.setBuildId(buildEntity);
             dbFile.setFileName(applicationInfo.get(AppNameParser.FILE_NAME));
             dbFile.setStatusId(statusRepository.findById(1));
@@ -155,3 +186,4 @@ public class FileService {
     }
 
 }
+

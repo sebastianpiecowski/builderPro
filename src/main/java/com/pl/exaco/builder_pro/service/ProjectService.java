@@ -4,12 +4,15 @@ import com.pl.exaco.builder_pro.dto.*;
 import com.pl.exaco.builder_pro.entity.BuildEntity;
 import com.pl.exaco.builder_pro.entity.FileEntity;
 import com.pl.exaco.builder_pro.entity.ProjectEntity;
+import com.pl.exaco.builder_pro.model.FilePaginationRequest;
 import com.pl.exaco.builder_pro.repository.BuildRepository;
 import com.pl.exaco.builder_pro.repository.FileRepository;
 import com.pl.exaco.builder_pro.repository.ProjectRepository;
 import com.pl.exaco.builder_pro.utils.AppNameParser;
 import com.pl.exaco.builder_pro.utils.DatetimeParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -69,16 +72,16 @@ public class ProjectService {
                     TypeDTO type = new TypeDTO();
                     type.setName(buildName);
                     List<FlavorFileDTO> buildFiles = getFilesForListOfBuilds(fileRepresentation);
-                    if(!buildFiles.isEmpty()) {
+                    if (!buildFiles.isEmpty()) {
                         type.setFiles(buildFiles);
                         flavor.getTypes().add(type);
                     }
                 });
-                if(!flavor.getTypes().isEmpty()) {
+                if (!flavor.getTypes().isEmpty()) {
                     flavors.add(flavor);
                 }
             });
-            if(!flavors.isEmpty()) {
+            if (!flavors.isEmpty()) {
                 projectDTO.setFlavors(flavors);
             }
         }
@@ -89,6 +92,7 @@ public class ProjectService {
         List<FlavorFileDTO> flavorFiles = new ArrayList<>();
         for (BuildEntity buildEntity : fileRepresentation) {
             List<FileEntity> files = fileRespository.findByBuildId_Id(buildEntity.getId());
+            System.out.println(files.size());
             files.forEach(f -> {
                 FlavorFileDTO flavorFile = new FlavorFileDTO();
                 flavorFile.setId(f.getId());

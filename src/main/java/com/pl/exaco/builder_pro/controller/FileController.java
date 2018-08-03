@@ -3,15 +3,14 @@ package com.pl.exaco.builder_pro.controller;
 import com.pl.exaco.builder_pro.dto.FileDTO;
 import com.pl.exaco.builder_pro.dto.IdDTO;
 import com.pl.exaco.builder_pro.dto.UpdateFileStatusDTO;
-import com.pl.exaco.builder_pro.entity.BuildEntity;
 import com.pl.exaco.builder_pro.entity.FileEntity;
-import com.pl.exaco.builder_pro.entity.ProjectEntity;
+import com.pl.exaco.builder_pro.model.FilePaginationRequest;
 import com.pl.exaco.builder_pro.model.FileStatusUpdateRequest;
 import com.pl.exaco.builder_pro.service.BuildService;
 import com.pl.exaco.builder_pro.service.FileService;
 import com.pl.exaco.builder_pro.service.ProjectService;
-import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
 import com.pl.exaco.builder_pro.utils.AppNameParser;
+import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
 import com.pl.exaco.builder_pro.utils.Configuration;
 import com.pl.exaco.builder_pro.utils.FileAdapter;
 import com.pl.exaco.builder_pro.utils.diawi.DiawiService;
@@ -23,9 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -42,14 +39,15 @@ public class FileController {
     @Autowired
     private DiawiService diawiService;
 
-    @GetMapping(value = "/file")
-    private ResponseEntity<List<FileDTO>> getFiles(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
+    @PostMapping(value = "/file")
+    private ResponseEntity<List<FileDTO>> getFiles(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token, @RequestBody FilePaginationRequest pagination) {
         try {
             AuthenticationHelper.Authorize(token);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        return new ResponseEntity<>(fileService.getFiles(), HttpStatus.OK);
+        return new ResponseEntity<>(fileService.getFiles(pagination), HttpStatus.OK);
+
     }
 
     @GetMapping(value = "/file/{id}")
@@ -75,7 +73,7 @@ public class FileController {
                 Map<String, String> applicationInfo = AppNameParser.parseApk(savedFile.getName());
                 StatusResponse status = diawiService.uploadFileAndWaitForResponse(savedFile);
                 if (status.getStatus() == 2000) {
-                   applicationInfo.put(AppNameParser.DIAWI_URL, status.getLink());
+                    applicationInfo.put(AppNameParser.DIAWI_URL, status.getLink());
 
                     IdDTO id = new IdDTO();
                     id.setId(fileService.storeApk(applicationInfo));
