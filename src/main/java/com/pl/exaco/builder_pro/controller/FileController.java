@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -60,6 +61,7 @@ public class FileController {
         }
         return new ResponseEntity<>(fileService.getFile(id), HttpStatus.OK);
     }
+
     @PostMapping(value = "/SendAppToFtp", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<IdDTO> SendAppToFtp(@RequestPart("file") MultipartFile file, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
         if (file != null) {
@@ -70,13 +72,13 @@ public class FileController {
                     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
                 }
                 File savedFile = FileAdapter.parseMultipartFileToFile(file);
+                Map<String, String> applicationInfo = AppNameParser.parseApk(savedFile.getName());
                 StatusResponse status = diawiService.uploadFileAndWaitForResponse(savedFile);
                 if (status.getStatus() == 2000) {
-                    Map<String, String> applicationInfo = AppNameParser.parseApk(savedFile.getName(), status);
-                    ProjectEntity project = projectService.findOrAddProject(applicationInfo);
-                    BuildEntity build = buildService.findOrAddBuild(project, applicationInfo);
+                   applicationInfo.put(AppNameParser.DIAWI_URL, status.getLink());
+
                     IdDTO id = new IdDTO();
-                    id.setId(fileService.addFile(build, applicationInfo));
+                    id.setId(fileService.storeApk(applicationInfo));
                     return new ResponseEntity<>(id, HttpStatus.OK);
                 } else if (status.getStatus() == 4000) {
                     if (!savedFile.delete()) {
@@ -85,7 +87,7 @@ public class FileController {
                         System.err.println("File was deleted");
                     }
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
             }
         }

@@ -17,6 +17,7 @@ public interface FileRepository extends JpaRepository<FileEntity, Integer> {
 
     FileEntity findFirstByBuildId_IdOrderByUploadDate(int buildId);
 
+    FileEntity findByFileName(String name);
     @Query(nativeQuery = true, value = "SELECT COUNT(f.Id) FROM [dbo].[File] AS f WHERE f.BuildId = :id")
     Integer countOfBuild(@Param("id") int id);
 }

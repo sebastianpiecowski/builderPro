@@ -15,7 +15,7 @@ public class AppNameParser {
     public static final String DIAWI_URL = "DiawiUrl";
 
 
-    public static Map<String, String> parseApk(String fileName, StatusResponse status) {
+    public static Map<String, String> parseApk(String fileName) {
         Map<String, String> applicationInfo = new HashMap<>();
 
         String[] arr = fileName.split("-");
@@ -23,7 +23,6 @@ public class AppNameParser {
         applicationInfo.put(FLAVOR, arr[1].toLowerCase());
         applicationInfo.put(BUILD_TYPE, arr[2].toLowerCase());
         applicationInfo.put(FILE_NAME, fileName);
-        applicationInfo.put(DIAWI_URL, status.getLink());
 
         return applicationInfo;
     }
