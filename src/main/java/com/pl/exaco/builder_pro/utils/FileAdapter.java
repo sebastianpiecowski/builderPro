@@ -9,6 +9,8 @@ import java.io.IOException;
 public class FileAdapter {
 
     public static File parseMultipartFileToFile(MultipartFile file) {
+        //TODO output stream does not close if exception is thrown (add finally block)
+        //TODO mkdir may throw exception as well (put in try-catch clause)
         new File(Configuration.DIRECTORY_PATH).mkdir();
         File newFile = null;
         FileOutputStream fos;

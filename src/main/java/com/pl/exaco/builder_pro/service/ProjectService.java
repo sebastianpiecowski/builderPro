@@ -69,14 +69,18 @@ public class ProjectService {
                     TypeDTO type = new TypeDTO();
                     type.setName(buildName);
                     List<FlavorFileDTO> buildFiles = getFilesForListOfBuilds(fileRepresentation);
-                    type.setFiles(buildFiles);
-                    flavor.getTypes().add(type);
+                    if(!buildFiles.isEmpty()) {
+                        type.setFiles(buildFiles);
+                        flavor.getTypes().add(type);
+                    }
                 });
-
-                flavors.add(flavor);
+                if(!flavor.getTypes().isEmpty()) {
+                    flavors.add(flavor);
+                }
             });
-            projectDTO.setFlavors(flavors);
-
+            if(!flavors.isEmpty()) {
+                projectDTO.setFlavors(flavors);
+            }
         }
         return projectDTO;
     }

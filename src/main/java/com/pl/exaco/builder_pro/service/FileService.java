@@ -5,6 +5,7 @@ import com.pl.exaco.builder_pro.dto.UpdateFileStatusDTO;
 import com.pl.exaco.builder_pro.entity.BuildEntity;
 import com.pl.exaco.builder_pro.entity.FileEntity;
 import com.pl.exaco.builder_pro.entity.StatusDictEntity;
+import com.pl.exaco.builder_pro.repository.BuildRepository;
 import com.pl.exaco.builder_pro.repository.FileRepository;
 import com.pl.exaco.builder_pro.repository.StatusRepository;
 import com.pl.exaco.builder_pro.utils.AppNameParser;
@@ -28,6 +29,9 @@ public class FileService {
     private FileRepository fileRepository;
     @Autowired
     private StatusRepository statusRepository;
+    @Autowired
+    private BuildRepository buildRepository;
+
     private ModelMapper modelMapper;
 
     public List<FileDTO> getFiles() {
@@ -56,7 +60,7 @@ public class FileService {
             FileEntity fileEntity = fileRepository.findFirstByBuildId_IdOrderByUploadDate(buildEntity.getId());
             File file = new File(Configuration.DIRECTORY_PATH + fileEntity.getFileName());
             if (file.delete()) {
-                fileRepository.delete(fileEntity);
+                deleteFile(fileEntity.getId());
                 FileEntity newFile = addApkToStorage(buildEntity, applicationInfo);
                 return newFile.getId();
             } else {
@@ -123,7 +127,15 @@ public class FileService {
     }
 
     public void deleteFile(int id) {
-        fileRepository.deleteById(id);
+        FileEntity file = fileRepository.findById(id);
+        if(file != null) {
+            Integer  build = file.getBuildId().getId();
+            fileRepository.deleteById(id);
+            if(fileRepository.countOfBuild(build) == 0){
+                buildRepository.findById(id);
+            }
+        }
+
     }
 
 }
