@@ -1,0 +1,55 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <appender name="htmlThread" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>logFileName</key>
+            <defaultValue>log0</defaultValue>
+        </discriminator>
+        <sift>
+
+            <appender name="htmlAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>logs/${logFileName}.html</file>
+                <rollingPolicy
+                        class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                    <FileNamePattern>logs/archive/${logFileName}.%i.zip
+                    </FileNamePattern>
+                    <MinIndex>1</MinIndex>
+                    <MaxIndex>100</MaxIndex>
+                </rollingPolicy>
+                <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+                    <layout class="ch.qos.logback.classic.html.HTMLLayout">
+                        <pattern>%t%relative%thread%mdc%level%logger%s%msg</pattern>
+                    </layout>
+                </encoder>
+
+
+                <triggeringPolicy
+                        class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <MaxFileSize>1MB</MaxFileSize>
+                </triggeringPolicy>
+            </appender>
+        </sift>
+    </appender>
+
+    <logger name="com.pl.exaco.builder_pro.utils.logger" level="DEBUG" additivity="true">
+        <appender-ref ref="htmlThread"/>
+    </logger>
+</configuration>
+
+
+<!-- patterns
+//my
+
+%-5date%-5relative%thread%-5level%logger{35}%msg
+
+
+//=======
+%-30(%d{HH:mm:ss.SSS} [%thread]) %-5level %logger{32} - %msg%n
+<pattern>%relative%thread%mdc%level%logger%msg</pattern>
+<pattern>%d{dd.MM.yyyy HH:mm:ss}%relative%thread%mdc%level%logger%msg</pattern>
+
+
+%-30(%d{dd.MM.yyyy HH:mm:ss}) %thread %-5level%logger{35}%msg
+
+
+-->

@@ -3,6 +3,7 @@ package com.pl.exaco.builder_pro.controller;
 import com.pl.exaco.builder_pro.entity.FlavorDictEntity;
 import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
 import com.pl.exaco.builder_pro.utils.Configuration;
+import com.pl.exaco.builder_pro.utils.logger.LoggerController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pl.exaco.builder_pro.service.FlavorService;
+import sun.rmi.runtime.Log;
 
 import java.util.List;
 
@@ -26,10 +28,11 @@ public class FlavorController {
 	private ResponseEntity<List<FlavorDictEntity>> getFlavorDict(@RequestHeader(AuthenticationHelper.HEADER_FIELD) String token){
 		try {
 			AuthenticationHelper.Authorize(token);
-
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
+		
 		return new ResponseEntity<>(flavorService.getFlavorDict(), HttpStatus.OK);
+
 	}
 }
