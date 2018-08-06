@@ -12,6 +12,7 @@
 storage/
 .idea/
 target/
+logs/
 builder_pro.iml
 *.apk
 *.iml
