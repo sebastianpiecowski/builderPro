@@ -8,5 +8,4 @@ public class BuilderProApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BuilderProApplication.class, args);
 	}
-
 }
