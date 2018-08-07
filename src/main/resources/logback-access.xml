@@ -1,8 +1,21 @@
 <configuration>
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%s</pattern>
-        </encoder>
-    </appender>
-    <appender-ref ref="CONSOLE" />
+        <!-- always a good activate OnConsoleStatusListener -->
+        <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
+
+        <appender name="htmlAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>logs/access.html</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>logs/access.%d{yyyy-MM-dd}.zip</fileNamePattern>
+            </rollingPolicy>
+            <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+                <layout class="ch.qos.logback.access.html.HTMLLayout">
+                    <pattern>%a%h%-30(%t{dd/MMM/yyyy HH:mm:ss}){}%r%b%s</pattern>
+                </layout>
+            </encoder>
+            <triggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                <MaxFileSize>1MB</MaxFileSize>
+            </triggeringPolicy>
+        </appender>
+        <appender-ref ref="htmlAppender" />
 </configuration>

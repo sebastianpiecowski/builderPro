@@ -4,6 +4,8 @@ import com.pl.exaco.builder_pro.entity.FlavorDictEntity;
 import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
 import com.pl.exaco.builder_pro.utils.Configuration;
 import com.pl.exaco.builder_pro.utils.logger.LoggerController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +33,6 @@ public class FlavorController {
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		
 		return new ResponseEntity<>(flavorService.getFlavorDict(), HttpStatus.OK);
 
 	}
