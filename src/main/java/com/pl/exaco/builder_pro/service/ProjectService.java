@@ -8,13 +8,19 @@ import com.pl.exaco.builder_pro.repository.BuildRepository;
 import com.pl.exaco.builder_pro.repository.FileRepository;
 import com.pl.exaco.builder_pro.repository.ProjectRepository;
 import com.pl.exaco.builder_pro.utils.ApkInfo;
+import com.pl.exaco.builder_pro.utils.Configuration;
 import com.pl.exaco.builder_pro.utils.DatetimeParser;
+import net.dongliu.apk.parser.ApkParser;
+import net.dongliu.apk.parser.bean.Icon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ProjectService {
@@ -38,17 +44,36 @@ public class ProjectService {
     }
 
     public ProjectEntity findOrAddProject(ApkInfo info) {
+        String apkFilePath = Configuration.DIRECTORY_PATH + info.getFileName();
+        String iconExtension = null;
+        String iconStoragePath;
+
+        try (ApkParser parser = new ApkParser(new File(apkFilePath))) {
+            final Icon iconFile = parser.getIconFile();
+            String iconInternalPath = iconFile.getPath();
+            iconExtension = iconInternalPath.substring(iconInternalPath.lastIndexOf('.'));
+            iconStoragePath = Configuration.ICONS_DIRECTORY_PATH + info.getProjectName() + iconExtension;
+            new File(Configuration.ICONS_DIRECTORY_PATH).mkdirs();
+            File file = new File(iconStoragePath);
+            FileOutputStream out = new FileOutputStream(file);
+            out.write(Objects.requireNonNull(iconFile.getData()));
+            out.close();
+        } catch (Exception e) {
+            iconStoragePath = null;
+        }
+
         ProjectEntity project = projectRepository.findByName(info.getProjectName());
         if (project == null) {
-            ProjectEntity projectEntity = new ProjectEntity();
-            projectEntity.setName(info.getProjectName());
-            projectEntity.setLastBuildFilename(info.getFileName());
-            projectRepository.save(projectEntity);
-            return projectEntity;
-        } else {
+            project = new ProjectEntity();
+            project.setName(info.getProjectName());
             project.setLastBuildFilename(info.getFileName());
-            return project;
         }
+        if (iconStoragePath != null) {
+            project.setThumbnail(Configuration.API_PATH_TO_ICONS + info.getProjectName() + iconExtension);
+        }
+
+        projectRepository.save(project);
+        return project;
     }
 
     public ProjectDTO getProject(int id) {
