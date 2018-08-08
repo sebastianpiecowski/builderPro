@@ -9,10 +9,7 @@ import com.pl.exaco.builder_pro.model.FileStatusUpdateRequest;
 import com.pl.exaco.builder_pro.service.BuildService;
 import com.pl.exaco.builder_pro.service.FileService;
 import com.pl.exaco.builder_pro.service.ProjectService;
-import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
-import com.pl.exaco.builder_pro.utils.AppNameParser;
-import com.pl.exaco.builder_pro.utils.Configuration;
-import com.pl.exaco.builder_pro.utils.FileAdapter;
+import com.pl.exaco.builder_pro.utils.*;
 import com.pl.exaco.builder_pro.utils.diawi.DiawiService;
 import com.pl.exaco.builder_pro.utils.diawi.StatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,13 +67,13 @@ public class FileController {
                     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
                 }
                 File savedFile = FileAdapter.parseMultipartFileToFile(file);
-                Map<String, String> applicationInfo = AppNameParser.parseApk(savedFile.getName());
+                ApkInfo apkInfo = new ApkInfo(savedFile.getName());
                 StatusResponse status = diawiService.uploadFileAndWaitForResponse(savedFile);
                 if (status.getStatus() == 2000) {
-                   applicationInfo.put(AppNameParser.DIAWI_URL, status.getLink());
+                    apkInfo.setDiawiUrl(status.getLink());
 
                     IdDTO id = new IdDTO();
-                    id.setId(fileService.storeApk(applicationInfo));
+                    id.setId(fileService.storeApk(apkInfo));
                     return new ResponseEntity<>(id, HttpStatus.OK);
                 } else if (status.getStatus() == 4000) {
                     if (!savedFile.delete()) {

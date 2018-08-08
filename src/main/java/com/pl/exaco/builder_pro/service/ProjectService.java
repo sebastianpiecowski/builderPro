@@ -4,21 +4,17 @@ import com.pl.exaco.builder_pro.dto.*;
 import com.pl.exaco.builder_pro.entity.BuildEntity;
 import com.pl.exaco.builder_pro.entity.FileEntity;
 import com.pl.exaco.builder_pro.entity.ProjectEntity;
-import com.pl.exaco.builder_pro.model.FilePaginationRequest;
 import com.pl.exaco.builder_pro.repository.BuildRepository;
 import com.pl.exaco.builder_pro.repository.FileRepository;
 import com.pl.exaco.builder_pro.repository.ProjectRepository;
-import com.pl.exaco.builder_pro.utils.AppNameParser;
+import com.pl.exaco.builder_pro.utils.ApkInfo;
 import com.pl.exaco.builder_pro.utils.DatetimeParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ProjectService {
@@ -41,16 +37,16 @@ public class ProjectService {
         return projectRepository.findByName(name);
     }
 
-    public ProjectEntity findOrAddProject(Map<String, String> projectInfo) {
-        ProjectEntity project = projectRepository.findByName(projectInfo.get(AppNameParser.PROJECT_NAME));
+    public ProjectEntity findOrAddProject(ApkInfo info) {
+        ProjectEntity project = projectRepository.findByName(info.getProjectName());
         if (project == null) {
             ProjectEntity projectEntity = new ProjectEntity();
-            projectEntity.setName(projectInfo.get(AppNameParser.PROJECT_NAME));
-            projectEntity.setLastBuildFilename(projectInfo.get(AppNameParser.FILE_NAME));
+            projectEntity.setName(info.getProjectName());
+            projectEntity.setLastBuildFilename(info.getFileName());
             projectRepository.save(projectEntity);
             return projectEntity;
         } else {
-            project.setLastBuildFilename(projectInfo.get(AppNameParser.FILE_NAME));
+            project.setLastBuildFilename(info.getFileName());
             return project;
         }
     }

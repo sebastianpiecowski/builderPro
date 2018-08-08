@@ -26,8 +26,8 @@ import static com.pl.exaco.builder_pro.utils.Configuration.DIRECTORY_PATH;
 //    private DiawiService diawiService;
 //
 //
-//    @Scheduled(cron = "0 1 */2 * * ?")
-//    public void scheduleTaskUsingCronExpression() {
+//    @Scheduled(cron = "0 0 0 */2 * ?")
+//    public void refreshDiawiLinks() {
 //
 //        List<FileDTO> files = fileService.getActiveFiles();
 //
@@ -46,7 +46,7 @@ import static com.pl.exaco.builder_pro.utils.Configuration.DIRECTORY_PATH;
 //        }
 //    }
 //
-//    @Scheduled(cron = "0 * * * * ?")
+//    @Scheduled(cron = "0 0 * * * ?")
 //    public void synchronizeDatabaseWithStorage() {
 //        File directory = new File(DIRECTORY_PATH);
 //        List<FileDTO> filesInDatabase = fileService.getActiveFiles();

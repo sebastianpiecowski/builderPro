@@ -10,7 +10,7 @@ import com.pl.exaco.builder_pro.model.FilePaginationRequest;
 import com.pl.exaco.builder_pro.repository.BuildRepository;
 import com.pl.exaco.builder_pro.repository.FileRepository;
 import com.pl.exaco.builder_pro.repository.StatusRepository;
-import com.pl.exaco.builder_pro.utils.AppNameParser;
+import com.pl.exaco.builder_pro.utils.ApkInfo;
 import com.pl.exaco.builder_pro.utils.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,7 +24,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class FileService {
@@ -91,24 +90,24 @@ public class FileService {
     }
 
     @Transactional
-    public Integer storeApk(Map<String, String> applicationInfo) {
-        ProjectEntity project = projectService.findOrAddProject(applicationInfo);
-        BuildEntity build = buildService.findOrAddBuild(project, applicationInfo);
-        return addFile(build, applicationInfo);
+    public Integer storeApk(ApkInfo info) {
+        ProjectEntity project = projectService.findOrAddProject(info);
+        BuildEntity build = buildService.findOrAddBuild(project, info);
+        return addFile(build, info);
     }
 
 
-    private Integer addFile(BuildEntity buildEntity, Map<String, String> applicationInfo) {
+    private Integer addFile(BuildEntity buildEntity, ApkInfo info) {
         Integer count = fileRepository.countOfBuild(buildEntity.getId());
         if (count < 3) {
-            FileEntity fileEntity = addApkToStorage(buildEntity, applicationInfo);
+            FileEntity fileEntity = addApkToStorage(buildEntity, info);
             return fileEntity.getId();
         } else {
             FileEntity fileEntity = fileRepository.findFirstByBuildId_IdOrderByUploadDate(buildEntity.getId());
             File file = new File(Configuration.DIRECTORY_PATH + fileEntity.getFileName());
             if (file.delete()) {
                 deleteFile(fileEntity.getId());
-                FileEntity newFile = addApkToStorage(buildEntity, applicationInfo);
+                FileEntity newFile = addApkToStorage(buildEntity, info);
                 return newFile.getId();
             } else {
                 return -1;
@@ -117,15 +116,15 @@ public class FileService {
         }
     }
 
-    private FileEntity addApkToStorage(BuildEntity buildEntity, Map<String, String> applicationInfo) {
-        FileEntity dbFile = fileRepository.findByFileName(applicationInfo.get(AppNameParser.FILE_NAME));
+    private FileEntity addApkToStorage(BuildEntity buildEntity, ApkInfo info) {
+        FileEntity dbFile = fileRepository.findByFileName(info.getFileName());
         if (dbFile == null) {
             dbFile = new FileEntity();
             dbFile.setBuildId(buildEntity);
-            dbFile.setFileName(applicationInfo.get(AppNameParser.FILE_NAME));
+            dbFile.setFileName(info.getFileName());
             dbFile.setStatusId(statusRepository.findById(1));
         }
-        dbFile.setDiawiUrl(applicationInfo.get(AppNameParser.DIAWI_URL));
+        dbFile.setDiawiUrl(info.getDiawiUrl());
         Timestamp uploadTimestamp = new Timestamp(System.currentTimeMillis());
         dbFile.setUploadDate(uploadTimestamp);
         Calendar cal = Calendar.getInstance();
