@@ -26,8 +26,8 @@ public class SchedulerConfig {
     private DiawiService diawiService;
 
 
-    @Scheduled(cron = "0 1 */2 * * ?")
-    public void scheduleTaskUsingCronExpression() {
+    @Scheduled(cron = "0 0 0 */2 * ?")
+    public void refreshDiawiLinks() {
 
         List<FileDTO> files = fileService.getActiveFiles();
 
@@ -46,7 +46,7 @@ public class SchedulerConfig {
         }
     }
 
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 * * * ?")
     public void synchronizeDatabaseWithStorage() {
         File directory = new File(DIRECTORY_PATH);
         List<FileDTO> filesInDatabase = fileService.getActiveFiles();
@@ -60,7 +60,7 @@ public class SchedulerConfig {
 
         filesInDatabase.forEach(f -> {
             if (!Arrays.stream(filesInStorage).anyMatch(fis -> fis.getName().equalsIgnoreCase(f.getFileName()))) {
-                fileService.deleteFile(f.getId());
+                fileService.deleteFile(fileService.findById(f.getId()));
             }
         });
     }

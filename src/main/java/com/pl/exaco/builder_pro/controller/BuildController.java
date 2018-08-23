@@ -6,13 +6,11 @@ import com.pl.exaco.builder_pro.utils.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.pl.exaco.builder_pro.service.BuildService;
 
+import javax.xml.ws.Response;
 import java.util.List;
 
 @RestController
@@ -32,4 +30,20 @@ public class BuildController {
 		}
 		return new ResponseEntity<>(buildService.getBuildDict(), HttpStatus.OK);
 	}
+
+	@DeleteMapping(value="/build/{id}")
+	private ResponseEntity<Void> deleteBuild(@PathVariable("id") Integer id, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token){
+		try {
+			AuthenticationHelper.Authorize(token);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+		try {
+			buildService.deleteBuild(id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+		}
+	}
+
 }

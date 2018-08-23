@@ -10,8 +10,8 @@ import com.pl.exaco.builder_pro.model.FilePaginationRequest;
 import com.pl.exaco.builder_pro.repository.BuildRepository;
 import com.pl.exaco.builder_pro.repository.FileRepository;
 import com.pl.exaco.builder_pro.repository.StatusRepository;
-import com.pl.exaco.builder_pro.utils.AppNameParser;
-import com.pl.exaco.builder_pro.utils.Configuration;
+import com.pl.exaco.builder_pro.utils.ApkInfo;
+import com.pl.exaco.builder_pro.utils.FileAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,12 +19,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class FileService {
@@ -78,10 +76,6 @@ public class FileService {
         return list;
     }
 
-    public FileEntity getLastFileQuery(int id) {
-        return fileRepository.findFirstByBuildId_IdOrderByUploadDate(id);
-    }
-
     public FileDTO getFile(int id) {
         FileEntity fileEntity = fileRepository.findById(id);
         if(fileEntity == null) return null;
@@ -89,18 +83,18 @@ public class FileService {
     }
 
     @Transactional
-    public Integer storeApk(Map<String, String> applicationInfo) {
-        ProjectEntity project = projectService.findOrAddProject(applicationInfo);
-        BuildEntity build = buildService.findOrAddBuild(project, applicationInfo);
-        return addFile(build, applicationInfo);
+    public Integer storeApk(ApkInfo info) {
+        ProjectEntity project = projectService.findOrAddProject(info);
+        BuildEntity build = buildService.findOrAddBuild(project, info);
+        return addFile(build, info);
     }
 
 
-    private Integer addFile(BuildEntity buildEntity, Map<String, String> applicationInfo) {
+    private Integer addFile(BuildEntity buildEntity, ApkInfo info) {
         // commented, story only 3 apk of build
         //Integer count = fileRepository.countOfBuild(buildEntity.getId());
         //if (count < 3) {
-            FileEntity fileEntity = addApkToStorage(buildEntity, applicationInfo);
+            FileEntity fileEntity = addApkToStorage(buildEntity, info);
             return fileEntity.getId();
         /*} else {
             FileEntity fileEntity = fileRepository.findFirstByBuildId_IdOrderByUploadDate(buildEntity.getId());
@@ -114,15 +108,15 @@ public class FileService {
             }*/
     }
 
-    private FileEntity addApkToStorage(BuildEntity buildEntity, Map<String, String> applicationInfo) {
-        FileEntity dbFile = fileRepository.findByFileName(applicationInfo.get(AppNameParser.FILE_NAME));
+    private FileEntity addApkToStorage(BuildEntity buildEntity, ApkInfo info) {
+        FileEntity dbFile = fileRepository.findByFileName(info.getFileName());
         if (dbFile == null) {
             dbFile = new FileEntity();
             dbFile.setBuildId(buildEntity);
-            dbFile.setFileName(applicationInfo.get(AppNameParser.FILE_NAME));
+            dbFile.setFileName(info.getFileName());
             dbFile.setStatusId(statusRepository.findById(1));
         }
-        dbFile.setDiawiUrl(applicationInfo.get(AppNameParser.DIAWI_URL));
+        dbFile.setDiawiUrl(info.getDiawiUrl());
         Timestamp uploadTimestamp = new Timestamp(System.currentTimeMillis());
         dbFile.setUploadDate(uploadTimestamp);
         Calendar cal = Calendar.getInstance();
@@ -133,7 +127,6 @@ public class FileService {
         fileRepository.save(dbFile);
         return dbFile;
     }
-
 
     public UpdateFileStatusDTO updateFileStatus(int fileId, int statusId) throws Exception {
         FileEntity fileEntity = fileRepository.findById(fileId);
@@ -164,24 +157,22 @@ public class FileService {
         }
     }
 
-    public List<FileEntity> getFilesByProjectId(int id) {
-        return fileRepository.findByBuildIdProjectId_Id(id);
-    }
-
     public FileEntity findById(int id) {
         return fileRepository.findById(id);
     }
 
-    public void deleteFile(int id) {
+    public void deleteFileFromDbAndStorage(int id) {
         FileEntity file = fileRepository.findById(id);
-        if (file != null) {
-            Integer build = file.getBuildId().getId();
-            fileRepository.deleteById(id);
-            if (fileRepository.countOfBuild(build) == 0) {
-                buildRepository.findById(id);
-            }
-        }
+        deleteFile(file);
+        FileAdapter.deleteFile(file.getFileName());
+    }
 
+    public void deleteFile(FileEntity file) {
+        Integer buildId = file.getBuildId().getId();
+        fileRepository.delete(file);
+        if (fileRepository.countOfBuild(buildId) == 0) {
+            buildRepository.deleteById(buildId);
+        }
     }
 }
 
