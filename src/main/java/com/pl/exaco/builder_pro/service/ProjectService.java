@@ -93,6 +93,7 @@ public class ProjectService {
                 buildTypes.forEach((buildName, fileRepresentation) -> {
                     TypeDTO type = new TypeDTO();
                     type.setName(buildName);
+                    type.setBuildId(fileRepresentation.get(0).getId());
                     List<FlavorFileDTO> buildFiles = getFilesForListOfBuilds(fileRepresentation);
                     if (!buildFiles.isEmpty()) {
                         type.setFiles(buildFiles);

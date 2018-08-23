@@ -60,7 +60,7 @@ public class SchedulerConfig {
 
         filesInDatabase.forEach(f -> {
             if (!Arrays.stream(filesInStorage).anyMatch(fis -> fis.getName().equalsIgnoreCase(f.getFileName()))) {
-                fileService.deleteFile(f.getId());
+                fileService.deleteFile(fileService.findById(f.getId()));
             }
         });
     }

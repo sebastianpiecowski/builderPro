@@ -6,10 +6,11 @@ import com.pl.exaco.builder_pro.dto.UpdateFileStatusDTO;
 import com.pl.exaco.builder_pro.entity.FileEntity;
 import com.pl.exaco.builder_pro.model.FilePaginationRequest;
 import com.pl.exaco.builder_pro.model.FileStatusUpdateRequest;
-import com.pl.exaco.builder_pro.service.BuildService;
 import com.pl.exaco.builder_pro.service.FileService;
-import com.pl.exaco.builder_pro.service.ProjectService;
-import com.pl.exaco.builder_pro.utils.*;
+import com.pl.exaco.builder_pro.utils.ApkInfo;
+import com.pl.exaco.builder_pro.utils.AuthenticationHelper;
+import com.pl.exaco.builder_pro.utils.Configuration;
+import com.pl.exaco.builder_pro.utils.FileAdapter;
 import com.pl.exaco.builder_pro.utils.diawi.DiawiService;
 import com.pl.exaco.builder_pro.utils.diawi.StatusResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = Configuration.VERSION)
@@ -29,10 +29,6 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
-    @Autowired
-    private BuildService buildService;
-    @Autowired
-    private ProjectService projectService;
     @Autowired
     private DiawiService diawiService;
 
@@ -125,5 +121,20 @@ public class FileController {
             return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         }
         return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+    }
+
+    @DeleteMapping(value = "/file/{id}")
+    private ResponseEntity<Void> DeleteFile(@PathVariable("id") Integer id, @RequestHeader(AuthenticationHelper.HEADER_FIELD) String token) {
+        try {
+            AuthenticationHelper.Authorize(token);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            fileService.deleteFileFromDbAndStorage(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
     }
 }

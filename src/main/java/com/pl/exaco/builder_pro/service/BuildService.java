@@ -2,15 +2,12 @@ package com.pl.exaco.builder_pro.service;
 
 import com.pl.exaco.builder_pro.entity.BuildDictEntity;
 import com.pl.exaco.builder_pro.entity.BuildEntity;
+import com.pl.exaco.builder_pro.entity.FileEntity;
 import com.pl.exaco.builder_pro.entity.ProjectEntity;
-import com.pl.exaco.builder_pro.repository.BuildDictRepository;
-import com.pl.exaco.builder_pro.repository.FlavorDictRepository;
-import com.pl.exaco.builder_pro.repository.ProjectRepository;
+import com.pl.exaco.builder_pro.repository.*;
 import com.pl.exaco.builder_pro.utils.ApkInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.pl.exaco.builder_pro.repository.BuildRepository;
 
 import java.util.List;
 
@@ -20,11 +17,15 @@ public class BuildService {
     @Autowired
     private BuildRepository buildRepository;
     @Autowired
+    private FileRepository fileRepository;
+    @Autowired
     private BuildDictRepository buildDictRepository;
     @Autowired
     private FlavorDictRepository flavorDictRepository;
     @Autowired
     public ProjectRepository projectRepository;
+    @Autowired
+    private FileService fileService;
 
     public List<BuildEntity> getAll() {
         return buildRepository.findAll();
@@ -53,4 +54,10 @@ public class BuildService {
     }
 
 
+    public void deleteBuild(int id) {
+        List<FileEntity> files = fileRepository.findByBuildId_Id(id);
+        for (FileEntity file:files) {
+            fileService.deleteFileFromDbAndStorage(file.getId());
+        }
+    }
 }

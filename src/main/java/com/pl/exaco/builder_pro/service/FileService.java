@@ -12,6 +12,7 @@ import com.pl.exaco.builder_pro.repository.FileRepository;
 import com.pl.exaco.builder_pro.repository.StatusRepository;
 import com.pl.exaco.builder_pro.utils.ApkInfo;
 import com.pl.exaco.builder_pro.utils.Configuration;
+import com.pl.exaco.builder_pro.utils.FileAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,8 +51,6 @@ public class FileService {
         return list;
     }
     public List<FileDTO> getFiles(FilePaginationRequest request) {
-
-
         int pageOfFiles;
         int sizeOfFiles;
         String sortingColumn = null;
@@ -79,10 +78,6 @@ public class FileService {
         return list;
     }
 
-    public FileEntity getLastFileQuery(int id) {
-        return fileRepository.findFirstByBuildId_IdOrderByUploadDate(id);
-    }
-
     public FileDTO getFile(int id) {
         FileEntity fileEntity = fileRepository.findById(id);
         if(fileEntity == null) return null;
@@ -96,7 +91,6 @@ public class FileService {
         return addFile(build, info);
     }
 
-
     private Integer addFile(BuildEntity buildEntity, ApkInfo info) {
         Integer count = fileRepository.countOfBuild(buildEntity.getId());
         if (count < 3) {
@@ -106,7 +100,8 @@ public class FileService {
             FileEntity fileEntity = fileRepository.findFirstByBuildId_IdOrderByUploadDate(buildEntity.getId());
             File file = new File(Configuration.DIRECTORY_PATH + fileEntity.getFileName());
             if (file.delete()) {
-                deleteFile(fileEntity.getId());
+                deleteFile(fileEntity);
+                //saving last file
                 FileEntity newFile = addApkToStorage(buildEntity, info);
                 return newFile.getId();
             } else {
@@ -135,7 +130,6 @@ public class FileService {
         fileRepository.save(dbFile);
         return dbFile;
     }
-
 
     public UpdateFileStatusDTO updateFileStatus(int fileId, int statusId) throws Exception {
         FileEntity fileEntity = fileRepository.findById(fileId);
@@ -166,25 +160,22 @@ public class FileService {
         }
     }
 
-    public List<FileEntity> getFilesByProjectId(int id) {
-        return fileRepository.findByBuildIdProjectId_Id(id);
-    }
-
     public FileEntity findById(int id) {
         return fileRepository.findById(id);
     }
 
-    public void deleteFile(int id) {
+    public void deleteFileFromDbAndStorage(int id) {
         FileEntity file = fileRepository.findById(id);
-        if (file != null) {
-            Integer build = file.getBuildId().getId();
-            fileRepository.deleteById(id);
-            if (fileRepository.countOfBuild(build) == 0) {
-                buildRepository.findById(id);
-            }
-        }
-
+        deleteFile(file);
+        FileAdapter.deleteFile(file.getFileName());
     }
 
+    public void deleteFile(FileEntity file) {
+        Integer buildId = file.getBuildId().getId();
+        fileRepository.delete(file);
+        if (fileRepository.countOfBuild(buildId) == 0) {
+            buildRepository.deleteById(buildId);
+        }
+    }
 }
 
