@@ -1,10 +1,16 @@
 package com.pl.exaco.builder_pro.utils;
 
+import com.pl.exaco.builder_pro.dto.StorageInfoDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class FileAdapter {
 
@@ -42,4 +48,21 @@ public class FileAdapter {
             return false;
         }
     }
+
+    public static StorageInfoDTO getStorageData() throws IOException {
+        StorageInfoDTO info = new StorageInfoDTO();
+        info.setUsedSpace(getCurrentUsedMemory()/(1.0 * Configuration.MEMORY_UNIT_COEFFICIENT));
+        info.setAllSpace(Configuration.MEMORY_SIZE_IN_DEFAULT_MEMORY_UNIT);
+        info.setMemoryUnit(Configuration.DEFAULT_MEMORY_UNIT);
+        return info;
+    }
+
+    public static long getCurrentUsedMemory() throws IOException {
+        Path folder = Paths.get(Configuration.DIRECTORY_PATH);
+        return Files.walk(folder, FileVisitOption.FOLLOW_LINKS)
+                .filter(p -> p.toFile().isFile())
+                .mapToLong(p -> p.toFile().length())
+                .sum();
+    }
+
 }
