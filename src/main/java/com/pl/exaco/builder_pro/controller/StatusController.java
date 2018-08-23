@@ -28,6 +28,5 @@ public class StatusController {
         }
         return new ResponseEntity<>(statusService.getStatusDict(), HttpStatus.OK);
     }
-
 }
 

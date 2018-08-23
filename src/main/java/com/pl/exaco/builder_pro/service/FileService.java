@@ -51,8 +51,6 @@ public class FileService {
         return list;
     }
     public List<FileDTO> getFiles(FilePaginationRequest request) {
-
-
         int pageOfFiles;
         int sizeOfFiles;
         String sortingColumn = null;
@@ -99,11 +97,12 @@ public class FileService {
 
 
     private Integer addFile(BuildEntity buildEntity, Map<String, String> applicationInfo) {
-        Integer count = fileRepository.countOfBuild(buildEntity.getId());
-        if (count < 3) {
+        // commented, story only 3 apk of build
+        //Integer count = fileRepository.countOfBuild(buildEntity.getId());
+        //if (count < 3) {
             FileEntity fileEntity = addApkToStorage(buildEntity, applicationInfo);
             return fileEntity.getId();
-        } else {
+        /*} else {
             FileEntity fileEntity = fileRepository.findFirstByBuildId_IdOrderByUploadDate(buildEntity.getId());
             File file = new File(Configuration.DIRECTORY_PATH + fileEntity.getFileName());
             if (file.delete()) {
@@ -112,9 +111,7 @@ public class FileService {
                 return newFile.getId();
             } else {
                 return -1;
-            }
-
-        }
+            }*/
     }
 
     private FileEntity addApkToStorage(BuildEntity buildEntity, Map<String, String> applicationInfo) {
@@ -186,6 +183,5 @@ public class FileService {
         }
 
     }
-
 }
 

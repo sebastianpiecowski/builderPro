@@ -32,5 +32,4 @@ public class BuildController {
 		}
 		return new ResponseEntity<>(buildService.getBuildDict(), HttpStatus.OK);
 	}
-
 }

@@ -34,6 +34,5 @@ public class FlavorController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		return new ResponseEntity<>(flavorService.getFlavorDict(), HttpStatus.OK);
-
 	}
 }
